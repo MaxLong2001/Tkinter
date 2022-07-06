@@ -60,7 +60,7 @@ def commit_data():
     buttonCommit.place_forget()
     labelInfo.config(foreground="#99CC66")
     labelResult.config(foreground="#0099CC")
-    labelSuggestion.config(foreground="black")
+    labelSuggestion.config(foreground=defaultColor)
     labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
     labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
     buttonCheckSuggestion.place(x=420, y=530, width=120, height=40, anchor="n")
@@ -102,8 +102,8 @@ def check_suggestion():
 
 def return_info():
     labelInfo.config(foreground="#0099CC")
-    labelResult.config(foreground="black")
-    labelSuggestion.config(foreground="black")
+    labelResult.config(foreground=defaultColor)
+    labelSuggestion.config(foreground=defaultColor)
     labelFrameResult1.place_forget()
     labelFrameResult2.place_forget()
     buttonCheckSuggestion.place_forget()
