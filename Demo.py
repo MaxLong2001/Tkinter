@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
-import re
 from tkinter.ttk import Entry
+from PIL import ImageTk
+import re
 
 defaultColor = "black"
 theme = "light"
@@ -330,6 +331,10 @@ labelResultHeight = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultWeight = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultLength = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultCircum = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
+
+figureFile = ImageTk.PhotoImage(file="figure.png")
+labelFigure = tk.Label(labelFrameResult1, image=figureFile, width=660, height=280)
+labelFigure.place(x=340, y=180, anchor="center")
 
 buttonCheckSuggestion = ttk.Button(window, text="查看健康建议", command=check_suggestion)
 
