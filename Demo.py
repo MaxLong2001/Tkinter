@@ -25,7 +25,7 @@ positiveSuggestionText = "½¡¿µ½¨Òé£º\n\n   ÄúµÄÏ¥¹Ø½Ú½¡¿µ×´¿öÁ¼ºÃ£¬¸øÄúÌá¹©Ò»Ð©Ô
 def import_data():
     global health, figureFile
     fileName = filedialog.askopenfilename(filetypes=[("CSVÎÄ¼þ", "*.csv")])
-    if fileName == "D:/´ó¶þÏÂ/¿ÆÑÐ¿ÎÌÃ/knee/knee/patient.csv":
+    if fileName == "D:/data/patient.csv":
         health = False
         figureFile = ImageTk.PhotoImage(file="./data/patient.png")
         labelFigure.config(image=figureFile)
@@ -230,6 +230,10 @@ def read_history_data():
 def return_from_history():
     global windowNo
     if windowNo == 1:
+        labelInfo.config(foreground="#0099CC")
+        labelResult.config(foreground=defaultColor)
+        labelSuggestion.config(foreground=defaultColor)
+        labelHistory.config(foreground=defaultColor)
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
@@ -240,6 +244,10 @@ def return_from_history():
         buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
         buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
     elif windowNo == 2:
+        labelInfo.config(foreground="#CCCCCC")
+        labelResult.config(foreground="#0099CC")
+        labelSuggestion.config(foreground=defaultColor)
+        labelHistory.config(foreground=defaultColor)
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
@@ -251,6 +259,10 @@ def return_from_history():
         buttonReturnInfo.place(x=640, y=530, width=120, height=40, anchor="n")
         buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
     elif windowNo == 3:
+        labelInfo.config(foreground="#CCCCCC")
+        labelResult.config(foreground="#CCCCCC")
+        labelSuggestion.config(foreground="#0099CC")
+        labelHistory.config(foreground=defaultColor)
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
