@@ -11,7 +11,7 @@ import re
 defaultColor = "black"
 theme = "light"
 windowNo = 1
-columns = ("姓名", "年龄", "性别", "身高(cm)", "体重(kg)", "大腿长度(cm)", "膝盖腿围(cm)", "健康状况")
+columns = ("序号", "姓名", "年龄", "性别", "身高(cm)", "体重(kg)", "大腿长度(cm)", "膝盖腿围(cm)", "健康状况")
 negativeSuggestionText = "健康建议：\n\n   您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞，" + \
                          "这可能是由于长期劳损或骨质疏松造成的慢性退变性撕裂，建议您依据实际情况去骨科或关节外科就医。\n\n" + \
                          "   如果您的膝盖近期受到过突发碰撞或者您是四十岁以下热爱运动的人群，损伤类型通常为急性创伤性损伤，" + \
@@ -28,6 +28,10 @@ def import_data():
     if fileName == "D:/大二下/科研课堂/knee/knee/patient.csv":
         health = False
         figureFile = ImageTk.PhotoImage(file="./data/patient.png")
+        labelFigure.config(image=figureFile)
+    else:
+        health = True
+        figureFile = ImageTk.PhotoImage(file="./data/health.png")
         labelFigure.config(image=figureFile)
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
@@ -203,16 +207,22 @@ def read_history_data():
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
     buttonHistory.place_forget()
-    labelFrameHistory.place(x=500, y=90, width=860, height=400, anchor="n")
-    buttonReturn.place(x=500, y=530, width=120, height=40, anchor="n")
+    labelFrameHistory.place(x=500, y=90, width=910, height=400, anchor="n")
+    buttonRefresh.place(x=290, y=530, width=120, height=40, anchor="n")
+    buttonReturn.place(x=430, y=530, width=120, height=40, anchor="n")
+    buttonClear.place(x=570, y=530, width=120, height=40, anchor="n")
+    buttonDelete.place(x=710, y=530, width=120, height=40, anchor="n")
     treeHistory.delete(*treeHistory.get_children())
     f = open("./data/history.txt", "r")
     line = f.readline()
+    lineCount = 0
     while line:
+        lineCount += 1
         dataList = line.split(" ")
-        treeHistory.insert("", "end", values=(
-            dataList[0], dataList[1], dataList[2], dataList[3], dataList[4], dataList[5], dataList[6],
-            "健康" if dataList[7].replace("\n", "") == "True" else "不健康"))
+        treeHistory.insert("", "end", values=(lineCount,
+                                              dataList[0], dataList[1], dataList[2], dataList[3], dataList[4],
+                                              dataList[5], dataList[6],
+                                              "健康" if dataList[7].replace("\n", "") == "True" else "不健康"))
         line = f.readline()
     f.close()
 
@@ -221,14 +231,20 @@ def return_from_history():
     global windowNo
     if windowNo == 1:
         labelFrameHistory.place_forget()
+        buttonRefresh.place_forget()
         buttonReturn.place_forget()
+        buttonClear.place_forget()
+        buttonDelete.place_forget()
         labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
         frameData.place(x=500, y=470, width=600, height=50, anchor="n")
         buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
         buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
     elif windowNo == 2:
         labelFrameHistory.place_forget()
+        buttonRefresh.place_forget()
         buttonReturn.place_forget()
+        buttonClear.place_forget()
+        buttonDelete.place_forget()
         labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
         labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
@@ -236,11 +252,53 @@ def return_from_history():
         buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
     elif windowNo == 3:
         labelFrameHistory.place_forget()
+        buttonRefresh.place_forget()
         buttonReturn.place_forget()
+        buttonClear.place_forget()
+        buttonDelete.place_forget()
         labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
         labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
         buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
+
+
+def refresh_history_data():
+    treeHistory.delete(*treeHistory.get_children())
+    f = open("./data/history.txt", "r")
+    line = f.readline()
+    lineCount = 0
+    while line:
+        lineCount += 1
+        dataList = line.split(" ")
+        treeHistory.insert("", "end", values=(lineCount,
+                                              dataList[0], dataList[1], dataList[2], dataList[3], dataList[4],
+                                              dataList[5], dataList[6],
+                                              "健康" if dataList[7].replace("\n", "") == "True" else "不健康"))
+        line = f.readline()
+    f.close()
+
+
+def clear_history_data():
+    f = open("./data/history.txt", "w")
+    f.write("")
+    f.close()
+    refresh_history_data()
+
+
+def delete_selected_data():
+    if len(treeHistory.selection()) != 1:
+        messagebox.showwarning("提示", "请选择一条要删除的数据")
+        return
+    selectedData = treeHistory.item(treeHistory.focus()).get("values")[0] - 1
+    print(selectedData)
+    with open("./data/history.txt", "r") as f_r:
+        lines = f_r.readlines()
+    with open("./data/history.txt", "w") as f_w:
+        for it in range(len(lines)):
+            if it != selectedData:
+                f_w.write(lines[it])
+    treeHistory.delete(treeHistory.selection())
+    refresh_history_data()
 
 
 """窗口"""
@@ -374,7 +432,6 @@ textSuggestion.place(x=340, y=200, anchor="center")
 labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
 labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
 
-
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))
 labelFrameHistory = ttk.LabelFrame(window, labelwidget=labelFrameHistoryTitle)
@@ -384,7 +441,10 @@ scrollBar.pack(side="right", fill="y")
 
 treeHistory = ttk.Treeview(labelFrameHistory, columns=columns, show="headings", height=14, yscrollcommand=scrollBar.set)
 for i in range(len(columns)):
-    treeHistory.column(columns[i], width=100, anchor="center")
+    if i == 0:
+        treeHistory.column(columns[i], width=50, anchor="center")
+    else:
+        treeHistory.column(columns[i], width=100, anchor="center")
     treeHistory.heading(columns[i], text=columns[i])
 treeHistory.place(x=0, y=0, anchor="nw")
 
@@ -395,5 +455,8 @@ buttonHistory = tk.Button(window, text="查看历史记录", command=read_history_data
 buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
 
 buttonReturn = tk.Button(window, text="返回", command=return_from_history, font=("微软雅黑", 12))
+buttonRefresh = tk.Button(window, text="刷新", command=refresh_history_data, font=("微软雅黑", 12))
+buttonClear = tk.Button(window, text="清空历史记录", command=clear_history_data, font=("微软雅黑", 12))
+buttonDelete = tk.Button(window, text="删除所选记录", command=delete_selected_data, font=("微软雅黑", 12))
 
 window.mainloop()
