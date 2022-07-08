@@ -1,3 +1,5 @@
+# coding: gbk
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
@@ -9,23 +11,23 @@ import re
 defaultColor = "black"
 theme = "light"
 windowNo = 1
-columns = ("å§“å", "å¹´é¾„", "æ€§åˆ«", "èº«é«˜(cm)", "ä½“é‡(kg)", "å¤§è…¿é•¿åº¦(cm)", "è†ç›–è…¿å›´(cm)", "å¥åº·çŠ¶å†µ")
-negativeSuggestionText = "å¥åº·å»ºè®®ï¼š\n\n   æ‚¨çš„è†å…³èŠ‚å¯èƒ½å·²ç»å—åˆ°æŸä¼¤å¦‚æœæ‚¨çš„è†ç›–è¿‘æœŸæ²¡æœ‰å—åˆ°çªå‘ç¢°æ’ï¼Œ" + \
-                         "è¿™å¯èƒ½æ˜¯ç”±äºé•¿æœŸåŠ³æŸæˆ–éª¨è´¨ç–æ¾é€ æˆçš„æ…¢æ€§é€€å˜æ€§æ’•è£‚ï¼Œå»ºè®®æ‚¨ä¾æ®å®é™…æƒ…å†µå»éª¨ç§‘æˆ–å…³èŠ‚å¤–ç§‘å°±åŒ»ã€‚\n\n" + \
-                         "   å¦‚æœæ‚¨çš„è†ç›–è¿‘æœŸå—åˆ°è¿‡çªå‘ç¢°æ’æˆ–è€…æ‚¨æ˜¯å››åå²ä»¥ä¸‹çƒ­çˆ±è¿åŠ¨çš„äººç¾¤ï¼ŒæŸä¼¤ç±»å‹é€šå¸¸ä¸ºæ€¥æ€§åˆ›ä¼¤æ€§æŸä¼¤ï¼Œ" + \
-                         "å»ºè®®æ‚¨ä¼˜å…ˆè€ƒè™‘è¿åŠ¨åŒ»å­¦ç§‘ã€‚\n\n   è¯·éµå¾ªåŒ»å˜±ï¼Œé€‰æ‹©ä¿å®ˆæ²»ç–—æˆ–æ‰‹æœ¯æ²»ç–—ï¼Œè¿‘æœŸåº”å½“æ³¨æ„ä¼‘æ¯å’Œé¥®é£Ÿï¼Œ" + \
-                         "é€‚å½“è¡¥å……ç»´ç”Ÿç´ å’Œé«˜è›‹ç™½ã€é’™å…ƒç´ ä¸°å¯Œçš„é£Ÿç‰©ï¼Œé€‚åº¦æ´»åŠ¨ï¼ˆå¦‚æ•£æ­¥ï¼‰ï¼Œå¹¶åšå¥½ç—…æƒ…ç›‘æ§ã€‚ "
-positiveSuggestionText = "å¥åº·å»ºè®®ï¼š\n\n   æ‚¨çš„è†å…³èŠ‚å¥åº·çŠ¶å†µè‰¯å¥½ï¼Œç»™æ‚¨æä¾›ä¸€äº›é¢„é˜²è†å…³èŠ‚æŸä¼¤çš„å»ºè®®ï¼š\n\n" + \
-                         "   è¿›è¡Œæœ‰ç›Šäºè†å…³èŠ‚å¥åº·çš„è¿åŠ¨ï¼ˆå¦‚éª‘è‡ªè¡Œè½¦ã€æ¸¸æ³³ï¼‰ï¼Œé¿å…è†å…³èŠ‚å‰§çƒˆè¿åŠ¨ï¼Œå¿…è¦æ—¶è¯·ä½©æˆ´å¥½æŠ¤è†ã€‚\n\n" + \
-                         "   æ³¨æ„é¥®é£Ÿï¼Œè¡¥å……ç»´ç”Ÿç´ ï¼Œé«˜è›‹ç™½ä»¥åŠå«é’™ä¸°å¯Œçš„é£Ÿç‰©ï¼Œé¿å…æš´é¥®æš´é£Ÿï¼Œæ§åˆ¶ä½“é‡ï¼›çˆ¬æ¥¼æ¢¯æ—¶é€Ÿåº¦ä¸å®œè¿‡å¿«ï¼Œä¸€æ­¥ä¸€é˜¶ã€‚"
+columns = ("ĞÕÃû", "ÄêÁä", "ĞÔ±ğ", "Éí¸ß(cm)", "ÌåÖØ(kg)", "´óÍÈ³¤¶È(cm)", "Ï¥¸ÇÍÈÎ§(cm)", "½¡¿µ×´¿ö")
+negativeSuggestionText = "½¡¿µ½¨Òé£º\n\n   ÄúµÄÏ¥¹Ø½Ú¿ÉÄÜÒÑ¾­ÊÜµ½ËğÉËÈç¹ûÄúµÄÏ¥¸Ç½üÆÚÃ»ÓĞÊÜµ½Í»·¢Åö×²£¬" + \
+                         "Õâ¿ÉÄÜÊÇÓÉÓÚ³¤ÆÚÀÍËğ»ò¹ÇÖÊÊèËÉÔì³ÉµÄÂıĞÔÍË±äĞÔËºÁÑ£¬½¨ÒéÄúÒÀ¾İÊµ¼ÊÇé¿öÈ¥¹Ç¿Æ»ò¹Ø½ÚÍâ¿Æ¾ÍÒ½¡£\n\n" + \
+                         "   Èç¹ûÄúµÄÏ¥¸Ç½üÆÚÊÜµ½¹ıÍ»·¢Åö×²»òÕßÄúÊÇËÄÊ®ËêÒÔÏÂÈÈ°®ÔË¶¯µÄÈËÈº£¬ËğÉËÀàĞÍÍ¨³£Îª¼±ĞÔ´´ÉËĞÔËğÉË£¬" + \
+                         "½¨ÒéÄúÓÅÏÈ¿¼ÂÇÔË¶¯Ò½Ñ§¿Æ¡£\n\n   Çë×ñÑ­Ò½Öö£¬Ñ¡Ôñ±£ÊØÖÎÁÆ»òÊÖÊõÖÎÁÆ£¬½üÆÚÓ¦µ±×¢ÒâĞİÏ¢ºÍÒûÊ³£¬" + \
+                         "ÊÊµ±²¹³äÎ¬ÉúËØºÍ¸ßµ°°×¡¢¸ÆÔªËØ·á¸»µÄÊ³Îï£¬ÊÊ¶È»î¶¯£¨ÈçÉ¢²½£©£¬²¢×öºÃ²¡Çé¼à¿Ø¡£ "
+positiveSuggestionText = "½¡¿µ½¨Òé£º\n\n   ÄúµÄÏ¥¹Ø½Ú½¡¿µ×´¿öÁ¼ºÃ£¬¸øÄúÌá¹©Ò»Ğ©Ô¤·ÀÏ¥¹Ø½ÚËğÉËµÄ½¨Òé£º\n\n" + \
+                         "   ½øĞĞÓĞÒæÓÚÏ¥¹Ø½Ú½¡¿µµÄÔË¶¯£¨ÈçÆï×ÔĞĞ³µ¡¢ÓÎÓ¾£©£¬±ÜÃâÏ¥¹Ø½Ú¾çÁÒÔË¶¯£¬±ØÒªÊ±ÇëÅå´÷ºÃ»¤Ï¥¡£\n\n" + \
+                         "   ×¢ÒâÒûÊ³£¬²¹³äÎ¬ÉúËØ£¬¸ßµ°°×ÒÔ¼°º¬¸Æ·á¸»µÄÊ³Îï£¬±ÜÃâ±©Òû±©Ê³£¬¿ØÖÆÌåÖØ£»ÅÀÂ¥ÌİÊ±ËÙ¶È²»ÒË¹ı¿ì£¬Ò»²½Ò»½×¡£"
 
 
 def import_data():
     global health, figureFile
-    fileName = filedialog.askopenfilename(filetypes=[("CSVæ–‡ä»¶", "*.csv")])
-    if fileName == "D:/å¤§äºŒä¸‹/ç§‘ç ”è¯¾å ‚/knee/knee/patient.csv":
+    fileName = filedialog.askopenfilename(filetypes=[("CSVÎÄ¼ş", "*.csv")])
+    if fileName == "D:/´ó¶şÏÂ/¿ÆÑĞ¿ÎÌÃ/knee/knee/patient.csv":
         health = False
-        figureFile = ImageTk.PhotoImage(file="patient.png")
+        figureFile = ImageTk.PhotoImage(file="./data/patient.png")
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
     entryData.insert(0, fileName)
@@ -55,30 +57,30 @@ def commit_data():
     circum = entryCircum.get()
     fileName = entryData.get()
     experience = entryExperience.get()
-    # if name == "":
-    #     messagebox.showerror(title="å§“åé”™è¯¯", message="è¯·è¾“å…¥å§“å", parent=window)
-    #     return
-    # if re.match("^\d+$", age) is None:
-    #     messagebox.showerror(title="å¹´é¾„é”™è¯¯", message="è¯·è¾“å…¥æ­£ç¡®çš„å¹´é¾„", parent=window)
-    #     return
-    # if re.match("^\d+$", height) is None:
-    #     messagebox.showerror(title="èº«é«˜é”™è¯¯", message="è¯·è¾“å…¥æ­£ç¡®çš„èº«é«˜", parent=window)
-    #     return
-    # if re.match("^\d+$", weight) is None:
-    #     messagebox.showerror(title="ä½“é‡é”™è¯¯", message="è¯·è¾“å…¥æ­£ç¡®çš„ä½“é‡", parent=window)
-    #     return
-    # if re.match("^\d+$", length) is None:
-    #     messagebox.showerror(title="èº«é«˜é”™è¯¯", message="è¯·è¾“å…¥æ­£ç¡®çš„èº«é«˜", parent=window)
-    #     return
-    # if re.match("^\d+$", circum) is None:
-    #     messagebox.showerror(title="è…¿å›´é”™è¯¯", message="è¯·è¾“å…¥æ­£ç¡®çš„è…¿å›´", parent=window)
-    #     return
-    # if experience == "":
-    #     messagebox.showerror(title="æŸä¼¤ç»å†é”™è¯¯", message="è¯·è¾“å…¥æŸä¼¤ç»å†ï¼Œè‹¥æ— æŸä¼¤ç»å†è¯·å¡«â€œæ— â€", parent=window)
-    #     return
-    # if fileName == "":
-    #     messagebox.showerror(title="æ•°æ®é”™è¯¯", message="è¯·é€‰æ‹©æ•°æ®æ–‡ä»¶", parent=window)
-    #     return
+    if name == "":
+        messagebox.showerror(title="ĞÕÃû´íÎó", message="ÇëÊäÈëĞÕÃû", parent=window)
+        return
+    if re.match("^\d+$", age) is None:
+        messagebox.showerror(title="ÄêÁä´íÎó", message="ÇëÊäÈëÕıÈ·µÄÄêÁä", parent=window)
+        return
+    if re.match("^\d+$", height) is None:
+        messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
+        return
+    if re.match("^\d+$", weight) is None:
+        messagebox.showerror(title="ÌåÖØ´íÎó", message="ÇëÊäÈëÕıÈ·µÄÌåÖØ", parent=window)
+        return
+    if re.match("^\d+$", length) is None:
+        messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
+        return
+    if re.match("^\d+$", circum) is None:
+        messagebox.showerror(title="ÍÈÎ§´íÎó", message="ÇëÊäÈëÕıÈ·µÄÍÈÎ§", parent=window)
+        return
+    if experience == "":
+        messagebox.showerror(title="ËğÉË¾­Àú´íÎó", message="ÇëÊäÈëËğÉË¾­Àú£¬ÈôÎŞËğÉË¾­ÀúÇëÌî¡°ÎŞ¡±", parent=window)
+        return
+    if fileName == "":
+        messagebox.showerror(title="Êı¾İ´íÎó", message="ÇëÑ¡ÔñÊı¾İÎÄ¼ş", parent=window)
+        return
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
@@ -97,21 +99,21 @@ def commit_data():
 
 def init_result_info():
     global name, age, male, height, weight, length, circum
-    labelResultName.config(text="å§“åï¼š" + name)
+    labelResultName.config(text="ĞÕÃû£º" + name)
     labelResultName.place(x=10, y=0)
-    labelResultAge.config(text="å¹´é¾„ï¼š" + str(age))
+    labelResultAge.config(text="ÄêÁä£º" + str(age))
     labelResultAge.place(x=10, y=30)
-    labelResultGender.config(text="æ€§åˆ«ï¼š" + "ç”·" if male else "æ€§åˆ«ï¼š" + "å¥³")
+    labelResultGender.config(text="ĞÔ±ğ£º" + "ÄĞ" if male else "ĞÔ±ğ£º" + "Å®")
     labelResultGender.place(x=10, y=60)
-    labelResultHeight.config(text="èº«é«˜(cm)ï¼š" + str(height))
+    labelResultHeight.config(text="Éí¸ß(cm)£º" + str(height))
     labelResultHeight.place(x=10, y=90)
-    labelResultWeight.config(text="ä½“é‡(kg)ï¼š" + str(weight))
+    labelResultWeight.config(text="ÌåÖØ(kg)£º" + str(weight))
     labelResultWeight.place(x=10, y=120)
-    labelResultLength.config(text="å¤§è…¿é•¿(cm)ï¼š" + str(length))
+    labelResultLength.config(text="´óÍÈ³¤(cm)£º" + str(length))
     labelResultLength.place(x=10, y=150)
-    labelResultCircum.config(text="è†ç›–è…¿å›´(cm)ï¼š" + str(circum))
+    labelResultCircum.config(text="Ï¥¸ÇÍÈÎ§(cm)£º" + str(circum))
     labelResultCircum.place(x=10, y=180)
-    labelResultExperience.config(text="æŸä¼¤ç»å†ï¼š" + experience)
+    labelResultExperience.config(text="ËğÉË¾­Àú£º" + experience)
     labelResultExperience.place(x=10, y=210)
 
 
@@ -134,14 +136,14 @@ def check_suggestion():
         textSuggestion.insert(1.0, positiveSuggestionText)
         textSuggestion.config(state="disabled")
         labelStatus.config(background="#99CC66")
-        labelStatus.config(text="        å¥åº·")
+        labelStatus.config(text="        ½¡¿µ")
     else:
         textSuggestion.config(state="normal")
         textSuggestion.delete(1.0, "end")
         textSuggestion.insert(1.0, negativeSuggestionText)
         textSuggestion.config(state="disabled")
         labelStatus.config(background="#FF0033")
-        labelStatus.config(text="      ä¸å¥åº·")
+        labelStatus.config(text="      ²»½¡¿µ")
     windowNo = 3
     write_history_data()
 
@@ -181,7 +183,7 @@ def return_info():
 def write_history_data():
     global name, age, male, height, weight, length, circum
     f = open("./data/history.txt", "a")
-    f.write(name + " " + str(age) + " " + ("ç”·" if male else "å¥³") + " " + str(height) + " " + str(weight) + " " + str(
+    f.write(name + " " + str(age) + " " + ("ÄĞ" if male else "Å®") + " " + str(height) + " " + str(weight) + " " + str(
         length) + " " + str(circum) + " " + str(health) + "\n")
     f.close()
 
@@ -209,7 +211,7 @@ def read_history_data():
         dataList = line.split(" ")
         treeHistory.insert("", "end", values=(
             dataList[0], dataList[1], dataList[2], dataList[3], dataList[4], dataList[5], dataList[6],
-            "å¥åº·" if dataList[7].replace("\n", "") == "True" else "ä¸å¥åº·"))
+            "½¡¿µ" if dataList[7].replace("\n", "") == "True" else "²»½¡¿µ"))
         line = f.readline()
     f.close()
 
@@ -240,84 +242,87 @@ def return_from_history():
         buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
 
 
+"""´°¿Ú"""
 window = tk.Tk()
-window.title("è†å…³èŠ‚å®‰å…¨è¯„ä¼°")
+window.title("Ï¥¹Ø½Ú°²È«ÆÀ¹À")
 window.geometry("1000x600")
 window.resizable(False, False)
+window.iconphoto(True, tk.PhotoImage(file="./data/icon.png"))
 
 window.tk.call("source", "azure.tcl")
 window.tk.call("set_theme", theme)
 
+"""¶¥²¿À¸"""
 frameHead = ttk.Frame(window, height=70, relief="groove", borderwidth=1)
 frameHead.pack(side="top", fill="x")
 
-labelInfo = ttk.Label(frameHead, text="ä¿¡æ¯å½•å…¥", font=("å¾®è½¯é›…é»‘", 18, "bold"), foreground="#0099CC")
+labelInfo = ttk.Label(frameHead, text="ĞÅÏ¢Â¼Èë", font=("Î¢ÈíÑÅºÚ", 18, "bold"), foreground="#0099CC")
 labelInfo.place(x=125, y=16, anchor="n")
-labelResult = ttk.Label(frameHead, text="æ£€æµ‹ç»“æœ", font=("å¾®è½¯é›…é»‘", 18, "bold"))
+labelResult = ttk.Label(frameHead, text="¼ì²â½á¹û", font=("Î¢ÈíÑÅºÚ", 18, "bold"))
 labelResult.place(x=375, y=16, anchor="n")
-labelSuggestion = ttk.Label(frameHead, text="å¥åº·å»ºè®®", font=("å¾®è½¯é›…é»‘", 18, "bold"))
+labelSuggestion = ttk.Label(frameHead, text="½¡¿µ½¨Òé", font=("Î¢ÈíÑÅºÚ", 18, "bold"))
 labelSuggestion.place(x=625, y=16, anchor="n")
-labelHistory = ttk.Label(frameHead, text="å†å²è®°å½•", font=("å¾®è½¯é›…é»‘", 18, "bold"))
+labelHistory = ttk.Label(frameHead, text="ÀúÊ·¼ÇÂ¼", font=("Î¢ÈíÑÅºÚ", 18, "bold"))
 labelHistory.place(x=875, y=16, anchor="n")
 
-"""åŸºæœ¬ä¿¡æ¯"""
-labelFrameInfoTitle = ttk.Label(text="åŸºæœ¬ä¿¡æ¯", font=("å¾®è½¯é›…é»‘", 14))
+"""»ù±¾ĞÅÏ¢"""
+labelFrameInfoTitle = ttk.Label(text="»ù±¾ĞÅÏ¢", font=("Î¢ÈíÑÅºÚ", 14))
 labelFrameInfo = ttk.LabelFrame(window, labelwidget=labelFrameInfoTitle)
 labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
 
 frameInfoBasic = ttk.Frame(labelFrameInfo, height=50)
 frameInfoBasic.place(x=50, y=40, width=500, height=50, anchor="w")
 
-labelName = ttk.Label(frameInfoBasic, text="å§“å", font=("å¾®è½¯é›…é»‘", 12))
+labelName = ttk.Label(frameInfoBasic, text="ĞÕÃû", font=("Î¢ÈíÑÅºÚ", 12))
 labelName.place(x=0, y=20, anchor="w")
 entryName = ttk.Entry(frameInfoBasic, width=10)
 entryName.place(x=40, y=20, anchor="w")
 
-labelAge = ttk.Label(frameInfoBasic, text="å¹´é¾„", font=("å¾®è½¯é›…é»‘", 12))
+labelAge = ttk.Label(frameInfoBasic, text="ÄêÁä", font=("Î¢ÈíÑÅºÚ", 12))
 labelAge.place(x=160, y=20, anchor="w")
 entryAge = ttk.Entry(frameInfoBasic, width=10)
 entryAge.place(x=200, y=20, anchor="w")
 
 isMale = tk.BooleanVar()
 isMale.set(True)
-labelGender = ttk.Label(frameInfoBasic, text="æ€§åˆ«", font=("å¾®è½¯é›…é»‘", 12))
+labelGender = ttk.Label(frameInfoBasic, text="ĞÔ±ğ", font=("Î¢ÈíÑÅºÚ", 12))
 labelGender.place(x=320, y=20, anchor="w")
-radioButtonMale = ttk.Radiobutton(frameInfoBasic, text="ç”·", variable=isMale, value=True)
+radioButtonMale = ttk.Radiobutton(frameInfoBasic, text="ÄĞ", variable=isMale, value=True)
 radioButtonMale.place(x=360, y=20, anchor="w")
-radioButtonFemale = ttk.Radiobutton(frameInfoBasic, text="å¥³", variable=isMale, value=False)
+radioButtonFemale = ttk.Radiobutton(frameInfoBasic, text="Å®", variable=isMale, value=False)
 radioButtonFemale.place(x=410, y=20, anchor="w")
 
 frameInfoHeight = ttk.Frame(labelFrameInfo, height=50)
 frameInfoHeight.place(x=50, y=90, width=500, height=50, anchor="w")
-labelHeight = ttk.Label(frameInfoHeight, text="èº«é«˜(cm)ï¼š", font=("å¾®è½¯é›…é»‘", 12))
+labelHeight = ttk.Label(frameInfoHeight, text="Éí¸ß(cm)£º", font=("Î¢ÈíÑÅºÚ", 12))
 labelHeight.place(x=0, y=20, anchor="w")
 entryHeight = ttk.Entry(frameInfoHeight, width=50)
 entryHeight.place(x=120, y=20, anchor="w")
 
 frameInfoWeight = ttk.Frame(labelFrameInfo, height=50)
 frameInfoWeight.place(x=50, y=140, width=500, height=50, anchor="w")
-labelWeight = ttk.Label(frameInfoWeight, text="ä½“é‡(kg)ï¼š", font=("å¾®è½¯é›…é»‘", 12))
+labelWeight = ttk.Label(frameInfoWeight, text="ÌåÖØ(kg)£º", font=("Î¢ÈíÑÅºÚ", 12))
 labelWeight.place(x=0, y=20, anchor="w")
 entryWeight = ttk.Entry(frameInfoWeight, width=50)
 entryWeight.place(x=120, y=20, anchor="w")
 
 frameInfoLength = ttk.Frame(labelFrameInfo, height=50)
 frameInfoLength.place(x=50, y=190, width=500, height=50, anchor="w")
-labelLength = ttk.Label(frameInfoLength, text="å¤§è…¿é•¿åº¦(cm)ï¼š", font=("å¾®è½¯é›…é»‘", 12))
+labelLength = ttk.Label(frameInfoLength, text="´óÍÈ³¤¶È(cm)£º", font=("Î¢ÈíÑÅºÚ", 12))
 labelLength.place(x=0, y=20, anchor="w")
 entryLength = ttk.Entry(frameInfoLength, width=50)
 entryLength.place(x=120, y=20, anchor="w")
 
 frameInfoCircum = ttk.Frame(labelFrameInfo, height=50)
 frameInfoCircum.place(x=50, y=240, width=500, height=50, anchor="w")
-labelCircum = ttk.Label(frameInfoCircum, text="è†ç›–è…¿å›´(cm)ï¼š", font=("å¾®è½¯é›…é»‘", 12))
+labelCircum = ttk.Label(frameInfoCircum, text="Ï¥¸ÇÍÈÎ§(cm)£º", font=("Î¢ÈíÑÅºÚ", 12))
 labelCircum.place(x=0, y=20, anchor="w")
 entryCircum = ttk.Entry(frameInfoCircum, width=50)
 entryCircum.place(x=120, y=20, anchor="w")
 
 frameInfoExperience = ttk.Frame(labelFrameInfo, height=50)
 frameInfoExperience.place(x=50, y=290, width=500, height=50, anchor="w")
-labelExperience = ttk.Label(frameInfoExperience, text="æŸä¼¤ç»å†ï¼š", font=("å¾®è½¯é›…é»‘", 12))
+labelExperience = ttk.Label(frameInfoExperience, text="ËğÉË¾­Àú£º", font=("Î¢ÈíÑÅºÚ", 12))
 labelExperience.place(x=0, y=20, anchor="w")
 entryExperience = ttk.Entry(frameInfoExperience, width=50)
 entryExperience.place(x=120, y=20, anchor="w")
@@ -328,49 +333,49 @@ frameData.place(x=500, y=470, width=600, height=50, anchor="n")
 entryData: Entry = ttk.Entry(frameData, width=65, state="readonly")
 entryData.place(x=0, y=20, anchor="w")
 
-buttonData = tk.Button(frameData, text="å¯¼å…¥æ•°æ®", command=import_data, font=("å¾®è½¯é›…é»‘", 12))
+buttonData = tk.Button(frameData, text="µ¼ÈëÊı¾İ", command=import_data, font=("Î¢ÈíÑÅºÚ", 12))
 buttonData.place(x=600, y=20, width=120, height=40, anchor="e")
 
-buttonCommit = tk.Button(window, text="ç¡®å®š", command=commit_data, font=("å¾®è½¯é›…é»‘", 12))
+buttonCommit = tk.Button(window, text="È·¶¨", command=commit_data, font=("Î¢ÈíÑÅºÚ", 12))
 buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
 
-"""æ£€æµ‹ç»“æœ"""
-labelFrameResultTitle1 = ttk.Label(text="æ£€æµ‹ç»“æœ", font=("å¾®è½¯é›…é»‘", 14))
+"""¼ì²â½á¹û"""
+labelFrameResultTitle1 = ttk.Label(text="¼ì²â½á¹û", font=("Î¢ÈíÑÅºÚ", 14))
 labelFrameResult1 = ttk.LabelFrame(window, labelwidget=labelFrameResultTitle1)
 
-labelFrameResultTitle2 = ttk.Label(text="åŸºæœ¬ä¿¡æ¯", font=("å¾®è½¯é›…é»‘", 14))
+labelFrameResultTitle2 = ttk.Label(text="»ù±¾ĞÅÏ¢", font=("Î¢ÈíÑÅºÚ", 14))
 labelFrameResult2 = ttk.LabelFrame(window, labelwidget=labelFrameResultTitle2)
 
-labelResultName = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultAge = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultGender = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultHeight = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultWeight = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultLength = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultCircum = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12))
-labelResultExperience = ttk.Label(labelFrameResult2, font=("å¾®è½¯é›…é»‘", 12), wraplength=180)
+labelResultName = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultAge = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultGender = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultHeight = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultWeight = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultLength = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultCircum = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultExperience = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12), wraplength=180)
 
-figureFile = ImageTk.PhotoImage(file="health.png")
+figureFile = ImageTk.PhotoImage(file="./data/health.png")
 labelFigure = tk.Label(labelFrameResult1, image=figureFile, width=660, height=280)
 labelFigure.place(x=340, y=180, anchor="center")
 
-buttonCheckSuggestion = tk.Button(window, text="æŸ¥çœ‹å¥åº·å»ºè®®", command=check_suggestion, font=("å¾®è½¯é›…é»‘", 12))
+buttonCheckSuggestion = tk.Button(window, text="²é¿´½¡¿µ½¨Òé", command=check_suggestion, font=("Î¢ÈíÑÅºÚ", 12))
 
-buttonReturnInfo = tk.Button(window, text="ç¼–è¾‘åŸºæœ¬ä¿¡æ¯", command=return_info, font=("å¾®è½¯é›…é»‘", 12))
+buttonReturnInfo = tk.Button(window, text="±à¼­»ù±¾ĞÅÏ¢", command=return_info, font=("Î¢ÈíÑÅºÚ", 12))
 
-"""å¥åº·å»ºè®®"""
-labelFrameSuggestionTitle = ttk.Label(text=" ", font=("å¾®è½¯é›…é»‘", 14))
+"""½¡¿µ½¨Òé"""
+labelFrameSuggestionTitle = ttk.Label(text=" ", font=("Î¢ÈíÑÅºÚ", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
-textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=15, wrap="char", font=("æ¥·ä½“", 15))
+textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=15, wrap="char", font=("¿¬Ìå", 15))
 textSuggestion.place(x=340, y=200, anchor="center")
 
-labelStatus = ttk.Label(labelFrameSuggestion, font=("å¾®è½¯é›…é»‘", 16))
+labelStatus = ttk.Label(labelFrameSuggestion, font=("Î¢ÈíÑÅºÚ", 16))
 labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
 
 
-"""å†å²è®°å½•"""
-labelFrameHistoryTitle = ttk.Label(text="å†å²è®°å½•", font=("å¾®è½¯é›…é»‘", 14))
+"""ÀúÊ·¼ÇÂ¼"""
+labelFrameHistoryTitle = ttk.Label(text="ÀúÊ·¼ÇÂ¼", font=("Î¢ÈíÑÅºÚ", 14))
 labelFrameHistory = ttk.LabelFrame(window, labelwidget=labelFrameHistoryTitle)
 
 scrollBar = ttk.Scrollbar(labelFrameHistory)
@@ -383,11 +388,11 @@ for i in range(len(columns)):
 treeHistory.place(x=0, y=0, anchor="nw")
 
 treeHistoryStyle = ttk.Style()
-treeHistoryStyle.configure("Treeview.Heading", font=("å¾®è½¯é›…é»‘", 12))
+treeHistoryStyle.configure("Treeview.Heading", font=("Î¢ÈíÑÅºÚ", 12))
 
-buttonHistory = tk.Button(window, text="æŸ¥çœ‹å†å²è®°å½•", command=read_history_data, font=("å¾®è½¯é›…é»‘", 12))
+buttonHistory = tk.Button(window, text="²é¿´ÀúÊ·¼ÇÂ¼", command=read_history_data, font=("Î¢ÈíÑÅºÚ", 12))
 buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
 
-buttonReturn = tk.Button(window, text="è¿”å›", command=return_from_history, font=("å¾®è½¯é›…é»‘", 12))
+buttonReturn = tk.Button(window, text="·µ»Ø", command=return_from_history, font=("Î¢ÈíÑÅºÚ", 12))
 
 window.mainloop()
