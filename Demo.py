@@ -10,18 +10,22 @@ defaultColor = "black"
 theme = "light"
 windowNo = 1
 columns = ("姓名", "年龄", "性别", "身高(cm)", "体重(kg)", "大腿长度(cm)", "膝盖腿围(cm)", "健康状况")
-positiveSuggestionText = "您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞，" + \
-                         "这可能是由于长期劳损或骨质疏松造成的慢性退变性撕裂，建议您依据实际情况去骨科或关节外科就医；" + \
-                         "如果您的膝盖近期受到过突发碰撞或者您是四十岁以下热爱运动的人群，损伤类型通常为急性创伤性损伤，" + \
-                         "建议您优先考虑运动医学科。请遵循医嘱，选择保守治疗或手术治疗，近期应当注意休息和饮食，" + \
+negativeSuggestionText = "健康建议：\n\n   您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞，" + \
+                         "这可能是由于长期劳损或骨质疏松造成的慢性退变性撕裂，建议您依据实际情况去骨科或关节外科就医。\n\n" + \
+                         "   如果您的膝盖近期受到过突发碰撞或者您是四十岁以下热爱运动的人群，损伤类型通常为急性创伤性损伤，" + \
+                         "建议您优先考虑运动医学科。\n\n   请遵循医嘱，选择保守治疗或手术治疗，近期应当注意休息和饮食，" + \
                          "适当补充维生素和高蛋白、钙元素丰富的食物，适度活动（如散步），并做好病情监控。 "
-negativeSuggestionText = "您的膝关节健康状况良好给您提供一些预防膝关节损伤的建议。" + \
-                         "进行有益于膝关节健康的运动（如骑自行车、游泳），避免膝关节剧烈运动，必要时请佩戴好护膝；" + \
-                         "注意饮食，补充维生素，高蛋白以及含钙丰富的食物，避免暴饮暴食，控制体重；爬楼梯时速度不宜过快，一步一阶。"
+positiveSuggestionText = "健康建议：\n\n   您的膝关节健康状况良好，给您提供一些预防膝关节损伤的建议：\n\n" + \
+                         "   进行有益于膝关节健康的运动（如骑自行车、游泳），避免膝关节剧烈运动，必要时请佩戴好护膝。\n\n" + \
+                         "   注意饮食，补充维生素，高蛋白以及含钙丰富的食物，避免暴饮暴食，控制体重；爬楼梯时速度不宜过快，一步一阶。"
 
 
 def import_data():
+    global health, figureFile
     fileName = filedialog.askopenfilename(filetypes=[("CSV文件", "*.csv")])
+    if fileName == "D:/大二下/科研课堂/knee/knee/patient.csv":
+        health = False
+        figureFile = ImageTk.PhotoImage(file="patient.png")
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
     entryData.insert(0, fileName)
@@ -35,12 +39,13 @@ height = 0
 weight = 0
 length = 0
 circum = 0
+experience = ""
 fileName = ""
 health = True
 
 
 def commit_data():
-    global name, age, male, height, weight, length, circum, fileName, windowNo
+    global name, age, male, height, weight, length, circum, experience, fileName, windowNo
     name = entryName.get()
     age = entryAge.get()
     male = isMale.get()
@@ -49,39 +54,43 @@ def commit_data():
     length = entryLength.get()
     circum = entryCircum.get()
     fileName = entryData.get()
-    if name == "":
-        messagebox.showerror(title="姓名错误", message="请输入姓名", parent=window)
-        return
-    if re.match("^\d+$", age) is None:
-        messagebox.showerror(title="年龄错误", message="请输入正确的年龄", parent=window)
-        return
-    if re.match("^\d+$", height) is None:
-        messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
-        return
-    if re.match("^\d+$", weight) is None:
-        messagebox.showerror(title="体重错误", message="请输入正确的体重", parent=window)
-        return
-    if re.match("^\d+$", length) is None:
-        messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
-        return
-    if re.match("^\d+$", circum) is None:
-        messagebox.showerror(title="腿围错误", message="请输入正确的腿围", parent=window)
-        return
-    if fileName == "":
-        messagebox.showerror(title="数据错误", message="请选择数据文件", parent=window)
-        return
+    experience = entryExperience.get()
+    # if name == "":
+    #     messagebox.showerror(title="姓名错误", message="请输入姓名", parent=window)
+    #     return
+    # if re.match("^\d+$", age) is None:
+    #     messagebox.showerror(title="年龄错误", message="请输入正确的年龄", parent=window)
+    #     return
+    # if re.match("^\d+$", height) is None:
+    #     messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
+    #     return
+    # if re.match("^\d+$", weight) is None:
+    #     messagebox.showerror(title="体重错误", message="请输入正确的体重", parent=window)
+    #     return
+    # if re.match("^\d+$", length) is None:
+    #     messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
+    #     return
+    # if re.match("^\d+$", circum) is None:
+    #     messagebox.showerror(title="腿围错误", message="请输入正确的腿围", parent=window)
+    #     return
+    # if experience == "":
+    #     messagebox.showerror(title="损伤经历错误", message="请输入损伤经历，若无损伤经历请填“无”", parent=window)
+    #     return
+    # if fileName == "":
+    #     messagebox.showerror(title="数据错误", message="请选择数据文件", parent=window)
+    #     return
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
-    labelInfo.config(foreground="#99CC66")
+    labelInfo.config(foreground="#CCCCCC")
     labelResult.config(foreground="#0099CC")
     labelSuggestion.config(foreground=defaultColor)
     labelHistory.config(foreground=defaultColor)
     labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
     labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
-    buttonCheckSuggestion.place(x=420, y=530, width=120, height=40, anchor="n")
-    buttonReturnInfo.place(x=580, y=530, width=120, height=40, anchor="n")
-    buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+    buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
+    buttonReturnInfo.place(x=640, y=530, width=120, height=40, anchor="n")
+    buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
     windowNo = 2
     init_result_info()
 
@@ -89,47 +98,50 @@ def commit_data():
 def init_result_info():
     global name, age, male, height, weight, length, circum
     labelResultName.config(text="姓名：" + name)
-    labelResultName.place(x=10, y=25)
+    labelResultName.place(x=10, y=0)
     labelResultAge.config(text="年龄：" + str(age))
-    labelResultAge.place(x=10, y=75)
+    labelResultAge.place(x=10, y=30)
     labelResultGender.config(text="性别：" + "男" if male else "性别：" + "女")
-    labelResultGender.place(x=10, y=125)
+    labelResultGender.place(x=10, y=60)
     labelResultHeight.config(text="身高(cm)：" + str(height))
-    labelResultHeight.place(x=10, y=175)
+    labelResultHeight.place(x=10, y=90)
     labelResultWeight.config(text="体重(kg)：" + str(weight))
-    labelResultWeight.place(x=10, y=225)
+    labelResultWeight.place(x=10, y=120)
     labelResultLength.config(text="大腿长(cm)：" + str(length))
-    labelResultLength.place(x=10, y=275)
+    labelResultLength.place(x=10, y=150)
     labelResultCircum.config(text="膝盖腿围(cm)：" + str(circum))
-    labelResultCircum.place(x=10, y=325)
+    labelResultCircum.place(x=10, y=180)
+    labelResultExperience.config(text="损伤经历：" + experience)
+    labelResultExperience.place(x=10, y=210)
 
 
 def check_suggestion():
     global windowNo
-    labelInfo.config(foreground="#99CC66")
-    labelResult.config(foreground="#99CC66")
+    labelInfo.config(foreground="#CCCCCC")
+    labelResult.config(foreground="#CCCCCC")
     labelSuggestion.config(foreground="#0099CC")
     labelHistory.config(foreground=defaultColor)
     labelFrameResult1.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameHistory.place_forget()
-    buttonReturnInfo.place(x=500, y=530, width=120, height=40, anchor="n")
-    labelFrameSuggestion.place(x=630, y=150, width=680, height=350, anchor="n")
-    buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+    buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
+    labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
+    buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
     if health:
         textSuggestion.config(state="normal")
         textSuggestion.delete(1.0, "end")
         textSuggestion.insert(1.0, positiveSuggestionText)
         textSuggestion.config(state="disabled")
+        labelStatus.config(background="#99CC66")
+        labelStatus.config(text="        健康")
     else:
         textSuggestion.config(state="normal")
         textSuggestion.delete(1.0, "end")
         textSuggestion.insert(1.0, negativeSuggestionText)
         textSuggestion.config(state="disabled")
-    labelStatus.config(background="#99CC66")
-    labelStatus.config(text="         健康")
-    labelStatus.place(x=630, y=100, width=150, height=50, anchor="n")
+        labelStatus.config(background="#FF0033")
+        labelStatus.config(text="      不健康")
     windowNo = 3
     write_history_data()
 
@@ -145,7 +157,6 @@ def return_info():
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
-    labelStatus.place_forget()
     labelFrameHistory.place_forget()
     entryName.delete(0, tk.END)
     entryName.insert(0, name)
@@ -161,15 +172,15 @@ def return_info():
     entryCircum.delete(0, tk.END)
     entryCircum.insert(0, str(circum))
     labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
-    frameData.place(x=500, y=470, width=480, height=50, anchor="n")
-    buttonCommit.place(x=500, y=530, width=100, height=40, anchor="n")
-    buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+    frameData.place(x=500, y=470, width=600, height=50, anchor="n")
+    buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
+    buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
     windowNo = 1
 
 
 def write_history_data():
     global name, age, male, height, weight, length, circum
-    f = open(".\data\history.txt", "a")
+    f = open("./data/history.txt", "a")
     f.write(name + " " + str(age) + " " + ("男" if male else "女") + " " + str(height) + " " + str(weight) + " " + str(
         length) + " " + str(circum) + " " + str(health) + "\n")
     f.close()
@@ -188,12 +199,11 @@ def read_history_data():
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
-    labelStatus.place_forget()
     buttonHistory.place_forget()
     labelFrameHistory.place(x=500, y=90, width=860, height=400, anchor="n")
-    buttonReturn.place(x=500, y=530, width=100, height=40, anchor="n")
+    buttonReturn.place(x=500, y=530, width=120, height=40, anchor="n")
     treeHistory.delete(*treeHistory.get_children())
-    f = open(".\data\history.txt", "r")
+    f = open("./data/history.txt", "r")
     line = f.readline()
     while line:
         dataList = line.split(" ")
@@ -210,25 +220,24 @@ def return_from_history():
         labelFrameHistory.place_forget()
         buttonReturn.place_forget()
         labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
-        frameData.place(x=500, y=470, width=480, height=50, anchor="n")
-        buttonCommit.place(x=500, y=530, width=100, height=40, anchor="n")
-        buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+        frameData.place(x=500, y=470, width=600, height=50, anchor="n")
+        buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
+        buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
     elif windowNo == 2:
         labelFrameHistory.place_forget()
         buttonReturn.place_forget()
         labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
         labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
-        buttonCheckSuggestion.place(x=420, y=530, width=120, height=40, anchor="n")
-        buttonReturnInfo.place(x=580, y=530, width=120, height=40, anchor="n")
-        buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+        buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
+        buttonReturnInfo.place(x=640, y=530, width=120, height=40, anchor="n")
+        buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
     elif windowNo == 3:
         labelFrameHistory.place_forget()
         buttonReturn.place_forget()
         labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
-        buttonReturnInfo.place(x=500, y=530, width=120, height=40, anchor="n")
-        labelFrameSuggestion.place(x=630, y=150, width=680, height=350, anchor="n")
-        buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
-        labelStatus.place(x=630, y=100, width=150, height=50, anchor="n")
+        buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
+        labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
+        buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
 
 
 window = tk.Tk()
@@ -257,7 +266,7 @@ labelFrameInfo = ttk.LabelFrame(window, labelwidget=labelFrameInfoTitle)
 labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
 
 frameInfoBasic = ttk.Frame(labelFrameInfo, height=50)
-frameInfoBasic.place(x=50, y=60, width=500, height=50, anchor="w")
+frameInfoBasic.place(x=50, y=40, width=500, height=50, anchor="w")
 
 labelName = ttk.Label(frameInfoBasic, text="姓名", font=("微软雅黑", 12))
 labelName.place(x=0, y=20, anchor="w")
@@ -279,43 +288,51 @@ radioButtonFemale = ttk.Radiobutton(frameInfoBasic, text="女", variable=isMale,
 radioButtonFemale.place(x=410, y=20, anchor="w")
 
 frameInfoHeight = ttk.Frame(labelFrameInfo, height=50)
-frameInfoHeight.place(x=50, y=120, width=500, height=50, anchor="w")
+frameInfoHeight.place(x=50, y=90, width=500, height=50, anchor="w")
 labelHeight = ttk.Label(frameInfoHeight, text="身高(cm)：", font=("微软雅黑", 12))
 labelHeight.place(x=0, y=20, anchor="w")
 entryHeight = ttk.Entry(frameInfoHeight, width=50)
 entryHeight.place(x=120, y=20, anchor="w")
 
 frameInfoWeight = ttk.Frame(labelFrameInfo, height=50)
-frameInfoWeight.place(x=50, y=180, width=500, height=50, anchor="w")
+frameInfoWeight.place(x=50, y=140, width=500, height=50, anchor="w")
 labelWeight = ttk.Label(frameInfoWeight, text="体重(kg)：", font=("微软雅黑", 12))
 labelWeight.place(x=0, y=20, anchor="w")
 entryWeight = ttk.Entry(frameInfoWeight, width=50)
 entryWeight.place(x=120, y=20, anchor="w")
 
 frameInfoLength = ttk.Frame(labelFrameInfo, height=50)
-frameInfoLength.place(x=50, y=240, width=500, height=50, anchor="w")
+frameInfoLength.place(x=50, y=190, width=500, height=50, anchor="w")
 labelLength = ttk.Label(frameInfoLength, text="大腿长度(cm)：", font=("微软雅黑", 12))
 labelLength.place(x=0, y=20, anchor="w")
 entryLength = ttk.Entry(frameInfoLength, width=50)
 entryLength.place(x=120, y=20, anchor="w")
 
 frameInfoCircum = ttk.Frame(labelFrameInfo, height=50)
-frameInfoCircum.place(x=50, y=300, width=500, height=50, anchor="w")
+frameInfoCircum.place(x=50, y=240, width=500, height=50, anchor="w")
 labelCircum = ttk.Label(frameInfoCircum, text="膝盖腿围(cm)：", font=("微软雅黑", 12))
 labelCircum.place(x=0, y=20, anchor="w")
 entryCircum = ttk.Entry(frameInfoCircum, width=50)
 entryCircum.place(x=120, y=20, anchor="w")
 
+frameInfoExperience = ttk.Frame(labelFrameInfo, height=50)
+frameInfoExperience.place(x=50, y=290, width=500, height=50, anchor="w")
+labelExperience = ttk.Label(frameInfoExperience, text="损伤经历：", font=("微软雅黑", 12))
+labelExperience.place(x=0, y=20, anchor="w")
+entryExperience = ttk.Entry(frameInfoExperience, width=50)
+entryExperience.place(x=120, y=20, anchor="w")
+
 frameData = ttk.Frame(window, height=50)
-frameData.place(x=500, y=470, width=480, height=50, anchor="n")
-entryData: Entry = ttk.Entry(frameData, width=50, state="readonly")
+frameData.place(x=500, y=470, width=600, height=50, anchor="n")
+
+entryData: Entry = ttk.Entry(frameData, width=65, state="readonly")
 entryData.place(x=0, y=20, anchor="w")
 
-buttonData = ttk.Button(frameData, text="导入数据", command=import_data)
-buttonData.place(x=480, y=20, width=100, height=40, anchor="e")
+buttonData = tk.Button(frameData, text="导入数据", command=import_data, font=("微软雅黑", 12))
+buttonData.place(x=600, y=20, width=120, height=40, anchor="e")
 
-buttonCommit = ttk.Button(window, text="确定", command=commit_data)
-buttonCommit.place(x=500, y=530, width=100, height=40, anchor="n")
+buttonCommit = tk.Button(window, text="确定", command=commit_data, font=("微软雅黑", 12))
+buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
 
 """检测结果"""
 labelFrameResultTitle1 = ttk.Label(text="检测结果", font=("微软雅黑", 14))
@@ -331,23 +348,26 @@ labelResultHeight = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultWeight = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultLength = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
 labelResultCircum = ttk.Label(labelFrameResult2, font=("微软雅黑", 12))
+labelResultExperience = ttk.Label(labelFrameResult2, font=("微软雅黑", 12), wraplength=180)
 
-figureFile = ImageTk.PhotoImage(file="figure.png")
+figureFile = ImageTk.PhotoImage(file="health.png")
 labelFigure = tk.Label(labelFrameResult1, image=figureFile, width=660, height=280)
 labelFigure.place(x=340, y=180, anchor="center")
 
-buttonCheckSuggestion = ttk.Button(window, text="查看健康建议", command=check_suggestion)
+buttonCheckSuggestion = tk.Button(window, text="查看健康建议", command=check_suggestion, font=("微软雅黑", 12))
 
-buttonReturnInfo = ttk.Button(window, text="编辑基本信息", command=return_info)
+buttonReturnInfo = tk.Button(window, text="编辑基本信息", command=return_info, font=("微软雅黑", 12))
 
 """健康建议"""
-labelFrameSuggestionTitle = ttk.Label(text="健康建议", font=("微软雅黑", 14))
+labelFrameSuggestionTitle = ttk.Label(text=" ", font=("微软雅黑", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
-textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=14, wrap="word", font=("楷体", 15))
-textSuggestion.place(x=340, y=155, anchor="center")
+textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=15, wrap="char", font=("楷体", 15))
+textSuggestion.place(x=340, y=200, anchor="center")
 
-labelStatus = ttk.Label(window, font=("微软雅黑", 16))
+labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
+labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
+
 
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))
@@ -365,9 +385,9 @@ treeHistory.place(x=0, y=0, anchor="nw")
 treeHistoryStyle = ttk.Style()
 treeHistoryStyle.configure("Treeview.Heading", font=("微软雅黑", 12))
 
-buttonHistory = ttk.Button(window, text="查看历史记录", command=read_history_data)
-buttonHistory.place(x=260, y=530, width=120, height=40, anchor="n")
+buttonHistory = tk.Button(window, text="查看历史记录", command=read_history_data, font=("微软雅黑", 12))
+buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
 
-buttonReturn = ttk.Button(window, text="返回", command=return_from_history)
+buttonReturn = tk.Button(window, text="返回", command=return_from_history, font=("微软雅黑", 12))
 
 window.mainloop()
