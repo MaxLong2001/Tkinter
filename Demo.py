@@ -28,6 +28,7 @@ def import_data():
     if fileName == "D:/大二下/科研课堂/knee/knee/patient.csv":
         health = False
         figureFile = ImageTk.PhotoImage(file="./data/patient.png")
+        labelFigure.config(image=figureFile)
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
     entryData.insert(0, fileName)
