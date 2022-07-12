@@ -1,12 +1,15 @@
 # coding: utf-8
 
 import tkinter as tk
+from threading import Thread
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.ttk import Entry
 from PIL import ImageTk
 import re
+import matlab.engine
+import time
 
 defaultColor = "black"
 theme = "light"
@@ -23,7 +26,7 @@ positiveSuggestionText = "健康建议：\n\n   您的膝关节健康状况良�
 
 
 def import_data():
-    global health, figureFile, directoryName
+    global health, directoryName
     directoryName = filedialog.askdirectory()
     # fileName = filedialog.askopenfilename(filetypes=[("CSV文件", "*.csv")])
     # if fileName == "D:/data/patient.csv":
@@ -50,6 +53,12 @@ circum = 0
 experience = ""
 directoryName = ""
 health = True
+
+
+def commit():
+    threads = [Thread(target=commit_data), Thread(target=run_matlab)]
+    for t in threads:
+        t.start()
 
 
 def commit_data():
@@ -101,6 +110,22 @@ def commit_data():
     buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
     windowNo = 2
     init_result_info()
+
+
+def run_matlab():
+    eng = matlab.engine.start_matlab()
+    ans = eng.knee_function(directoryName, nargout=3)
+    labelResultData1.config(text="变点数：" + str(ans[0]))
+    labelResultData2.config(text="周期：" + str(ans[1]) + "s")
+    labelResultData3.config(text="自相关系数：" + str(ans[2]))
+    eng.quit()
+    frameResultLoading.place_forget()
+    time.sleep(1)
+    figureFile = ImageTk.PhotoImage(file=directoryName + "/1.png")
+    print(directoryName + "/1.png")
+    print(figureFile)
+    labelFigure.config(image=figureFile)
+    labelFigure.place(x=340, y=150, anchor="center")
 
 
 def init_result_info():
@@ -408,7 +433,7 @@ entryData.place(x=0, y=20, anchor="w")
 buttonData = tk.Button(frameData, text="导入数据", command=import_data, font=("微软雅黑", 12))
 buttonData.place(x=600, y=20, width=120, height=40, anchor="e")
 
-buttonCommit = tk.Button(window, text="确定", command=commit_data, font=("微软雅黑", 12))
+buttonCommit = tk.Button(window, text="确定", command=commit, font=("微软雅黑", 12))
 buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
 
 """检测结果"""
@@ -427,18 +452,24 @@ labelResultLength = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12))
 labelResultCircum = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12))
 labelResultExperience = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12), wraplength=180)
 
-figureFile = ImageTk.PhotoImage(file="./data/health.png")
-labelFigure = tk.Label(labelFrameResult, image=figureFile, width=660, height=280)
-labelFigure.place(x=340, y=150, anchor="center")
+labelFigure = tk.Label(labelFrameResult, width=660, height=280)
+
+frameResultLoading = ttk.Frame(labelFrameResult, height=300)
+frameResultLoading.place(x=380, y=150, width=300, height=100, anchor="center")
+figureLoading = tk.PhotoImage(file="./data/loading.gif")
+labelFigureLoading = tk.Label(frameResultLoading, image=figureLoading)
+labelFigureLoading.place(x=0, y=50, anchor="w")
+labelResultLoading = ttk.Label(frameResultLoading, text="正在计算...", font=("微软雅黑", 12))
+labelResultLoading.place(x=80, y=48, anchor="w")
 
 frameResultData = ttk.Frame(labelFrameResult, height=50)
 frameResultData.place(x=340, y=320, width=660, height=40, anchor="n")
 
-labelResultData1 = ttk.Label(frameResultData, font=("微软雅黑", 12), text="Data1")
+labelResultData1 = ttk.Label(frameResultData, font=("微软雅黑", 12))
 labelResultData1.place(x=0, y=20, anchor="w")
-labelResultData2 = ttk.Label(frameResultData, font=("微软雅黑", 12), text="Data2")
+labelResultData2 = ttk.Label(frameResultData, font=("微软雅黑", 12))
 labelResultData2.place(x=220, y=20, anchor="w")
-labelResultData3 = ttk.Label(frameResultData, font=("微软雅黑", 12), text="Data3")
+labelResultData3 = ttk.Label(frameResultData, font=("微软雅黑", 12))
 labelResultData3.place(x=440, y=20, anchor="w")
 
 buttonCheckSuggestion = tk.Button(window, text="查看健康建议", command=check_suggestion, font=("微软雅黑", 12))

@@ -1,22 +1,19 @@
-clear;clc
-for file_num=11
-    filepase='D:\大二下\科研课堂\knee\knee\所有数据\'+string(file_num);
+function [num_mean,T_mean,datacorrelation_mean] = knee_function(filepase)
     cd(filepase);
     addpath(genpath('..\'));
-    line=24*(file_num-1)+3;
-    for file=4
+    number=1;
+    for file=0:7
         %% 读取，滤波,归一化。得到四组滤波、归一化后信号。m:表格列数%%%%只需更改文件名和采样频率、m
         efs=250000;ymin=0;ymax=1;type=1;
         p=2;s=6;rp=5;rs=13.2;n=1;
         x1=linspace(0,4,1000000);
         filename=char('tek000'+string(file)+'ALL.csv');ef=zeros([1000000 4]);
 
-        for m=3
+        for m=1:3
             y=csvread(filename,21,m,[21,m,1000020,m]);
             ef=bandpassdesig_mode_gg(efs, y, p, s, rp, rs,n);
             em=guiyi(ef,type,ymin,ymax);
-            %% 峭度qd
-            qd2=kurtosis(em);
+
             %% 变点数num
             extrMaxValue=find(diff(sign(diff(em)))==-2)+1;
             extrMinValue=find(diff(sign(diff(em)))==2)+1;
@@ -48,11 +45,10 @@ for file_num=11
                         extrMinValue_true(end+1)=extrMinValue(k);
                     end
                 end
-                num=length(extrMaxValue_true)+length(extrMinValue_true);
-                subplot(321);
-                plot(0.000004*extrMaxValue_true,ef(extrMaxValue_true),"ro");
-                plot(0.000004*extrMinValue_true,ef(extrMinValue_true),"go");
-                hold off;
+                num(file+1,m)=length(extrMaxValue_true)+length(extrMinValue_true);            
+                %saveas(1,'save.jpg');
+                %print 1.jpg -djpeg -r1000
+                %hold off;
             %% 自相关系数ACF
                 i=1;
                 Max1=[];
@@ -218,33 +214,40 @@ for file_num=11
                 
                 if datacorrelation_1>datacorrelation_2
                     t=linspace(0,T1/1000000*4,T1+1);
-                    subplot(323);plot(t,data1,t,data2);
-                    subplot(324);plot(t,data3,t,data4);
-                    datacorrelation=datacorrelation_1;
-                    T=T1;
+                    %subplot(323);plot(t,data1,t,data2);
+                    %subplot(324);plot(t,data3,t,data4);
+                    datacorrelation(file+1,m)=datacorrelation_1;
+                    T(file+1,m)=T1;
                 else
                      t=linspace(0,T2/1000000*4,T2+1);
-                     subplot(323);plot(t,data5,t,data6);
-                     subplot(324);plot(t,data7,t,data8);
-                     T=T2;
-                     datacorrelation=datacorrelation_2;
+                     %subplot(323);plot(t,data5,t,data6);
+                     %subplot(324);plot(t,data7,t,data8);
+                     T(file+1,m)=T2;
+                     datacorrelation(file+1,m)=datacorrelation_2;
                 end
-            %% 能量energy
-            y1=em;
-            energy=sum(abs(y1).^2)/efs;
-            Energymean=mean(energy)*4/T;
-            %% 结果：%与健康信号的相关度R %峭度qd %能量energy %自相关系数ACF %变点数num
-                    disp(file_num);
-                    disp(file);
-                    disp(m);
-                    line=line+4;
+               number=number+1;
+               display(number);
         end
-            
-        line=line-11;
-        if file==3
-            line=line+8;
         end
-       
-    
+num_mean=mean(num(:));
+T_mean=mean(T(:));
+datacorrelation_sort=sort(datacorrelation(:));
+datacorrelation_mean=mean(datacorrelation(:));
+datacorrelation_middle=datacorrelation_sort(12);
+display(datacorrelation_middle);
+
+for j=0:7
+    for k=1:3
+        if datacorrelation(j+1,k)==datacorrelation_middle
+           filename=char('tek000'+string(j)+'ALL.csv');ef=zeros([1000000 4]); 
+           y=csvread(filename,21,k,[21,k,1000020,k]);
+           ef=bandpassdesig_mode_gg(efs, y, p, s, rp, rs,n);
+           em=guiyi(ef,type,ymin,ymax);
+           t=linspace(0,4,1000000);
+           plot(t,em);
+           saveas(gcf,'1.png');
+        end
     end
 end
+end
+

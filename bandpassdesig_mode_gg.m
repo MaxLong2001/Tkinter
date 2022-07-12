@@ -8,9 +8,9 @@ t=0:1/efs:(sigLength-1)/efs;
 [freq amp] = myfft(y, efs);
 if n
 %subplot(321);
-plot(freq, amp);xlim([0,100])
-xlabel('Frequency (Hz)'); title('Before fiter');
-ylabel('|Y(f)|');
+%plot(freq, amp);xlim([0,100])
+%xlabel('Frequency (Hz)'); title('Before fiter');
+%ylabel('|Y(f)|');
 end
 [N, Wn] = buttord(wp* 2 / efs, ws* 2 / efs, rp, rs);
 [Fb,Fa]=butter(N, Wn); 
@@ -25,13 +25,13 @@ end
 ef = filtfilt(Fb, Fa, y);%滤波
 if n
  %plot(t,y); title('original');xlabel('Time(s)');ylabel('Voltage(V)');
-subplot(321); plot(t,ef); title('filter'); xlabel('Time(s)');ylabel('Voltage(V)');hold on;
+%subplot(321); plot(t,ef); title('filter'); xlabel('Time(s)');ylabel('Voltage(V)');hold on;
 end
 [freq amp] = myfft(ef, efs);
 if n
 %plot(freq/1, amp);
-xlim([0,10]);
-xlabel('Frequency (Hz)');%xlim([0 220000]);
+%xlim([0,10]);
+%xlabel('Frequency (Hz)');%xlim([0 220000]);
 %subplot(322);ylabel('|Y(f)|');title('After fiter');
 end
 end
