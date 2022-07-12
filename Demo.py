@@ -23,19 +23,20 @@ positiveSuggestionText = "½¡¿µ½¨Òé£º\n\n   ÄúµÄÏ¥¹Ø½Ú½¡¿µ×´¿öÁ¼ºÃ£¬¸øÄúÌá¹©Ò»Ğ©Ô
 
 
 def import_data():
-    global health, figureFile
-    fileName = filedialog.askopenfilename(filetypes=[("CSVÎÄ¼ş", "*.csv")])
-    if fileName == "D:/data/patient.csv":
-        health = False
-        figureFile = ImageTk.PhotoImage(file="./data/patient.png")
-        labelFigure.config(image=figureFile)
-    else:
-        health = True
-        figureFile = ImageTk.PhotoImage(file="./data/health.png")
-        labelFigure.config(image=figureFile)
+    global health, figureFile, directoryName
+    directoryName = filedialog.askdirectory()
+    # fileName = filedialog.askopenfilename(filetypes=[("CSVÎÄ¼ş", "*.csv")])
+    # if fileName == "D:/data/patient.csv":
+    #     health = False
+    #     figureFile = ImageTk.PhotoImage(file="./data/patient.png")
+    #     labelFigure.config(image=figureFile)
+    # else:
+    #     health = True
+    #     figureFile = ImageTk.PhotoImage(file="./data/health.png")
+    #     labelFigure.config(image=figureFile)
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
-    entryData.insert(0, fileName)
+    entryData.insert(0, directoryName)
     entryData.config(state="readonly")
 
 
@@ -47,7 +48,7 @@ weight = 0
 length = 0
 circum = 0
 experience = ""
-fileName = ""
+directoryName = ""
 health = True
 
 
@@ -62,30 +63,30 @@ def commit_data():
     circum = entryCircum.get()
     fileName = entryData.get()
     experience = entryExperience.get()
-    if name == "":
-        messagebox.showerror(title="ĞÕÃû´íÎó", message="ÇëÊäÈëĞÕÃû", parent=window)
-        return
-    if re.match("^\d+$", age) is None:
-        messagebox.showerror(title="ÄêÁä´íÎó", message="ÇëÊäÈëÕıÈ·µÄÄêÁä", parent=window)
-        return
-    if re.match("^\d+$", height) is None:
-        messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
-        return
-    if re.match("^\d+$", weight) is None:
-        messagebox.showerror(title="ÌåÖØ´íÎó", message="ÇëÊäÈëÕıÈ·µÄÌåÖØ", parent=window)
-        return
-    if re.match("^\d+$", length) is None:
-        messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
-        return
-    if re.match("^\d+$", circum) is None:
-        messagebox.showerror(title="ÍÈÎ§´íÎó", message="ÇëÊäÈëÕıÈ·µÄÍÈÎ§", parent=window)
-        return
-    if experience == "":
-        messagebox.showerror(title="ËğÉË¾­Àú´íÎó", message="ÇëÊäÈëËğÉË¾­Àú£¬ÈôÎŞËğÉË¾­ÀúÇëÌî¡°ÎŞ¡±", parent=window)
-        return
-    if fileName == "":
-        messagebox.showerror(title="Êı¾İ´íÎó", message="ÇëÑ¡ÔñÊı¾İÎÄ¼ş", parent=window)
-        return
+    # if name == "":
+    #     messagebox.showerror(title="ĞÕÃû´íÎó", message="ÇëÊäÈëĞÕÃû", parent=window)
+    #     return
+    # if re.match("^\d+$", age) is None:
+    #     messagebox.showerror(title="ÄêÁä´íÎó", message="ÇëÊäÈëÕıÈ·µÄÄêÁä", parent=window)
+    #     return
+    # if re.match("^\d+$", height) is None:
+    #     messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
+    #     return
+    # if re.match("^\d+$", weight) is None:
+    #     messagebox.showerror(title="ÌåÖØ´íÎó", message="ÇëÊäÈëÕıÈ·µÄÌåÖØ", parent=window)
+    #     return
+    # if re.match("^\d+$", length) is None:
+    #     messagebox.showerror(title="Éí¸ß´íÎó", message="ÇëÊäÈëÕıÈ·µÄÉí¸ß", parent=window)
+    #     return
+    # if re.match("^\d+$", circum) is None:
+    #     messagebox.showerror(title="ÍÈÎ§´íÎó", message="ÇëÊäÈëÕıÈ·µÄÍÈÎ§", parent=window)
+    #     return
+    # if experience == "":
+    #     messagebox.showerror(title="ËğÉË¾­Àú´íÎó", message="ÇëÊäÈëËğÉË¾­Àú£¬ÈôÎŞËğÉË¾­ÀúÇëÌî¡°ÎŞ¡±", parent=window)
+    #     return
+    # if fileName == "":
+    #     messagebox.showerror(title="Êı¾İ´íÎó", message="ÇëÑ¡ÔñÊı¾İÎÄ¼ş", parent=window)
+    #     return
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
@@ -93,8 +94,8 @@ def commit_data():
     labelResult.config(foreground="#0099CC")
     labelSuggestion.config(foreground=defaultColor)
     labelHistory.config(foreground=defaultColor)
-    labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
-    labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
+    labelFrameResult.place(x=630, y=100, width=680, height=400, anchor="n")
+    labelFrameResultBasic.place(x=150, y=100, width=200, height=400, anchor="n")
     buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
     buttonReturnInfo.place(x=640, y=530, width=120, height=40, anchor="n")
     buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
@@ -128,7 +129,7 @@ def check_suggestion():
     labelResult.config(foreground="#CCCCCC")
     labelSuggestion.config(foreground="#0099CC")
     labelHistory.config(foreground=defaultColor)
-    labelFrameResult1.place_forget()
+    labelFrameResult.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameHistory.place_forget()
@@ -159,8 +160,8 @@ def return_info():
     labelResult.config(foreground=defaultColor)
     labelSuggestion.config(foreground=defaultColor)
     labelHistory.config(foreground=defaultColor)
-    labelFrameResult1.place_forget()
-    labelFrameResult2.place_forget()
+    labelFrameResult.place_forget()
+    labelFrameResultBasic.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
@@ -201,8 +202,8 @@ def read_history_data():
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
-    labelFrameResult1.place_forget()
-    labelFrameResult2.place_forget()
+    labelFrameResult.place_forget()
+    labelFrameResultBasic.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
@@ -253,8 +254,8 @@ def return_from_history():
         buttonReturn.place_forget()
         buttonClear.place_forget()
         buttonDelete.place_forget()
-        labelFrameResult1.place(x=630, y=100, width=680, height=400, anchor="n")
-        labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
+        labelFrameResult.place(x=630, y=100, width=680, height=400, anchor="n")
+        labelFrameResultBasic.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
         buttonReturnInfo.place(x=640, y=530, width=120, height=40, anchor="n")
         buttonHistory.place(x=360, y=530, width=120, height=40, anchor="n")
@@ -268,7 +269,7 @@ def return_from_history():
         buttonReturn.place_forget()
         buttonClear.place_forget()
         buttonDelete.place_forget()
-        labelFrameResult2.place(x=150, y=100, width=200, height=400, anchor="n")
+        labelFrameResultBasic.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
         labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
         buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
@@ -411,24 +412,34 @@ buttonCommit = tk.Button(window, text="È·¶¨", command=commit_data, font=("Î¢ÈíÑÅ
 buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
 
 """¼ì²â½á¹û"""
-labelFrameResultTitle1 = ttk.Label(text="¼ì²â½á¹û", font=("Î¢ÈíÑÅºÚ", 14))
-labelFrameResult1 = ttk.LabelFrame(window, labelwidget=labelFrameResultTitle1)
+labelFrameResultTitle = ttk.Label(text="¼ì²â½á¹û", font=("Î¢ÈíÑÅºÚ", 14))
+labelFrameResult = ttk.LabelFrame(window, labelwidget=labelFrameResultTitle)
 
-labelFrameResultTitle2 = ttk.Label(text="»ù±¾ĞÅÏ¢", font=("Î¢ÈíÑÅºÚ", 14))
-labelFrameResult2 = ttk.LabelFrame(window, labelwidget=labelFrameResultTitle2)
+labelFrameResultBasicTitle = ttk.Label(text="»ù±¾ĞÅÏ¢", font=("Î¢ÈíÑÅºÚ", 14))
+labelFrameResultBasic = ttk.LabelFrame(window, labelwidget=labelFrameResultBasicTitle)
 
-labelResultName = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultAge = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultGender = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultHeight = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultWeight = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultLength = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultCircum = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12))
-labelResultExperience = ttk.Label(labelFrameResult2, font=("Î¢ÈíÑÅºÚ", 12), wraplength=180)
+labelResultName = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultAge = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultGender = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultHeight = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultWeight = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultLength = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultCircum = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12))
+labelResultExperience = ttk.Label(labelFrameResultBasic, font=("Î¢ÈíÑÅºÚ", 12), wraplength=180)
 
 figureFile = ImageTk.PhotoImage(file="./data/health.png")
-labelFigure = tk.Label(labelFrameResult1, image=figureFile, width=660, height=280)
-labelFigure.place(x=340, y=180, anchor="center")
+labelFigure = tk.Label(labelFrameResult, image=figureFile, width=660, height=280)
+labelFigure.place(x=340, y=150, anchor="center")
+
+frameResultData = ttk.Frame(labelFrameResult, height=50)
+frameResultData.place(x=340, y=320, width=660, height=40, anchor="n")
+
+labelResultData1 = ttk.Label(frameResultData, font=("Î¢ÈíÑÅºÚ", 12), text="Data1")
+labelResultData1.place(x=0, y=20, anchor="w")
+labelResultData2 = ttk.Label(frameResultData, font=("Î¢ÈíÑÅºÚ", 12), text="Data2")
+labelResultData2.place(x=220, y=20, anchor="w")
+labelResultData3 = ttk.Label(frameResultData, font=("Î¢ÈíÑÅºÚ", 12), text="Data3")
+labelResultData3.place(x=440, y=20, anchor="w")
 
 buttonCheckSuggestion = tk.Button(window, text="²é¿´½¡¿µ½¨Òé", command=check_suggestion, font=("Î¢ÈíÑÅºÚ", 12))
 
