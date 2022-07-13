@@ -61,6 +61,12 @@ newMatrix = []
 
 
 def get_result():
+    labelResultData1.config(text="")
+    labelResultData2.config(text="")
+    labelResultData3.config(text="")
+    frameResultFigure.place_forget()
+    frameResultLoading.place(x=380, y=150, width=300, height=100, anchor="center")
+
     thread1 = Thread(target=commit_data)
     thread2 = Thread(target=run_matlab_result)
     thread1.start()
@@ -511,7 +517,6 @@ labelResultCircum = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12))
 labelResultExperience = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12), wraplength=180)
 
 frameResultLoading = ttk.Frame(labelFrameResult, height=300)
-frameResultLoading.place(x=380, y=150, width=300, height=100, anchor="center")
 figureLoading = tk.PhotoImage(file="./data/loading.gif")
 labelFigureLoading = tk.Label(frameResultLoading, image=figureLoading)
 labelFigureLoading.place(x=0, y=50, anchor="w")
