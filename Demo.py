@@ -6,10 +6,14 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.ttk import Entry
-from PIL import ImageTk
 import re
+import matlab
 import matlab.engine
-import time
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.font_manager import FontProperties
+import numpy as np
+import pandas as pd
 
 defaultColor = "black"
 theme = "light"
@@ -53,12 +57,66 @@ circum = 0
 experience = ""
 directoryName = ""
 health = True
+newMatrix = []
 
 
-def commit():
-    threads = [Thread(target=commit_data), Thread(target=run_matlab)]
-    for t in threads:
-        t.start()
+def get_result():
+    thread1 = Thread(target=commit_data)
+    thread2 = Thread(target=run_matlab_result)
+    thread1.start()
+    thread2.start()
+
+
+def get_suggestion():
+    thread1 = Thread(target=check_suggestion)
+    thread2 = Thread(target=run_matlab_suggestion)
+    thread1.start()
+    thread2.start()
+
+
+def run_matlab_result():
+    global newMatrix, directoryName
+    eng = matlab.engine.start_matlab()
+    ans = eng.knee_function(directoryName, nargout=7)
+    eng.quit()
+
+    labelResultData1.config(text="平均变点数：" + str(format(ans[0], ".3f")))
+    labelResultData2.config(text="周期：" + str(format(ans[1] / 1000000 * 4, ".3f")) + "s")
+    labelResultData3.config(text="自相关系数：" + str(format(ans[2], ".3f")))
+
+    basicData = np.zeros((len(ans[4]), 4))
+    basicData[:, 0] = height
+    basicData[:, 1] = weight
+    basicData[:, 2] = circum
+    basicData[:, 3] = length
+    newMatrix = np.hstack((basicData, ans[4], ans[5], ans[6]))
+    print(basicData)
+    print(newMatrix)
+
+    points = np.array(ans[3][0])
+    t = np.array(np.linspace(0, 4, len(points)))
+    tmp = fig.add_subplot(111)
+    tmp.plot(t, points)
+    tmp.set_ylabel("信号强度", fontproperties=FontProperties(fname="msyh.ttc", size=12))
+
+    frameResultLoading.place_forget()
+    frameResultFigure.place(x=340, y=0, width=660, height=310, anchor="n")
+
+
+def run_matlab_suggestion():
+    global newMatrix
+    dataSheet = pd.read_excel("./data/data_collection.xlsx", sheet_name="Sheet8")
+    dataArray = np.array(dataSheet)
+    dataList = dataArray.tolist()
+    matlabDataList = matlab.double(dataList)
+    matlabNewMatrix = matlab.double(newMatrix.tolist())
+    print(matlabDataList)
+    print(matlabNewMatrix)
+
+    eng = matlab.engine.start_matlab()
+    ans = eng.classify(matlabDataList, matlabNewMatrix, 20, nargout=1)
+    eng.quit()
+    print(ans)
 
 
 def commit_data():
@@ -112,22 +170,6 @@ def commit_data():
     init_result_info()
 
 
-def run_matlab():
-    eng = matlab.engine.start_matlab()
-    ans = eng.knee_function(directoryName, nargout=3)
-    labelResultData1.config(text="变点数：" + str(ans[0]))
-    labelResultData2.config(text="周期：" + str(ans[1]) + "s")
-    labelResultData3.config(text="自相关系数：" + str(ans[2]))
-    eng.quit()
-    frameResultLoading.place_forget()
-    time.sleep(1)
-    figureFile = ImageTk.PhotoImage(file=directoryName + "/1.png")
-    print(directoryName + "/1.png")
-    print(figureFile)
-    labelFigure.config(image=figureFile)
-    labelFigure.place(x=340, y=150, anchor="center")
-
-
 def init_result_info():
     global name, age, male, height, weight, length, circum
     labelResultName.config(text="姓名：" + name)
@@ -154,13 +196,16 @@ def check_suggestion():
     labelResult.config(foreground="#CCCCCC")
     labelSuggestion.config(foreground="#0099CC")
     labelHistory.config(foreground=defaultColor)
+
     labelFrameResult.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameHistory.place_forget()
+
     buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
     labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
     buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
+
     if health:
         textSuggestion.config(state="normal")
         textSuggestion.delete(1.0, "end")
@@ -175,6 +220,7 @@ def check_suggestion():
         textSuggestion.config(state="disabled")
         labelStatus.config(background="#FF0033")
         labelStatus.config(text="      不健康")
+
     windowNo = 3
     write_history_data()
 
@@ -185,12 +231,14 @@ def return_info():
     labelResult.config(foreground=defaultColor)
     labelSuggestion.config(foreground=defaultColor)
     labelHistory.config(foreground=defaultColor)
+
     labelFrameResult.place_forget()
     labelFrameResultBasic.place_forget()
     buttonCheckSuggestion.place_forget()
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
     labelFrameHistory.place_forget()
+
     entryName.delete(0, tk.END)
     entryName.insert(0, name)
     entryAge.delete(0, tk.END)
@@ -204,6 +252,7 @@ def return_info():
     entryLength.insert(0, str(length))
     entryCircum.delete(0, tk.END)
     entryCircum.insert(0, str(circum))
+
     labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
     frameData.place(x=500, y=470, width=600, height=50, anchor="n")
     buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
@@ -213,7 +262,7 @@ def return_info():
 
 def write_history_data():
     global name, age, male, height, weight, length, circum
-    f = open("./data/history.txt", "a")
+    f = open("./data/history.txt", "a", encoding="utf-8")
     f.write(name + " " + str(age) + " " + ("男" if male else "女") + " " + str(height) + " " + str(weight) + " " + str(
         length) + " " + str(circum) + " " + str(health) + "\n")
     f.close()
@@ -224,6 +273,7 @@ def read_history_data():
     labelResult.config(foreground=defaultColor)
     labelSuggestion.config(foreground=defaultColor)
     labelHistory.config(foreground="#0099CC")
+
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
@@ -233,13 +283,15 @@ def read_history_data():
     buttonReturnInfo.place_forget()
     labelFrameSuggestion.place_forget()
     buttonHistory.place_forget()
+
     labelFrameHistory.place(x=500, y=90, width=910, height=400, anchor="n")
     buttonRefresh.place(x=290, y=530, width=120, height=40, anchor="n")
     buttonReturn.place(x=430, y=530, width=120, height=40, anchor="n")
     buttonClear.place(x=570, y=530, width=120, height=40, anchor="n")
     buttonDelete.place(x=710, y=530, width=120, height=40, anchor="n")
+
     treeHistory.delete(*treeHistory.get_children())
-    f = open("./data/history.txt", "r")
+    f = open("./data/history.txt", "r", encoding="utf-8")
     line = f.readline()
     lineCount = 0
     while line:
@@ -260,11 +312,13 @@ def return_from_history():
         labelResult.config(foreground=defaultColor)
         labelSuggestion.config(foreground=defaultColor)
         labelHistory.config(foreground=defaultColor)
+
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
         buttonClear.place_forget()
         buttonDelete.place_forget()
+
         labelFrameInfo.place(x=500, y=90, width=600, height=360, anchor="n")
         frameData.place(x=500, y=470, width=600, height=50, anchor="n")
         buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
@@ -274,11 +328,13 @@ def return_from_history():
         labelResult.config(foreground="#0099CC")
         labelSuggestion.config(foreground=defaultColor)
         labelHistory.config(foreground=defaultColor)
+
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
         buttonClear.place_forget()
         buttonDelete.place_forget()
+
         labelFrameResult.place(x=630, y=100, width=680, height=400, anchor="n")
         labelFrameResultBasic.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonCheckSuggestion.place(x=500, y=530, width=120, height=40, anchor="n")
@@ -289,11 +345,13 @@ def return_from_history():
         labelResult.config(foreground="#CCCCCC")
         labelSuggestion.config(foreground="#0099CC")
         labelHistory.config(foreground=defaultColor)
+
         labelFrameHistory.place_forget()
         buttonRefresh.place_forget()
         buttonReturn.place_forget()
         buttonClear.place_forget()
         buttonDelete.place_forget()
+
         labelFrameResultBasic.place(x=150, y=100, width=200, height=400, anchor="n")
         buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
         labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
@@ -302,7 +360,7 @@ def return_from_history():
 
 def refresh_history_data():
     treeHistory.delete(*treeHistory.get_children())
-    f = open("./data/history.txt", "r")
+    f = open("./data/history.txt", "r", encoding="utf-8")
     line = f.readline()
     lineCount = 0
     while line:
@@ -433,7 +491,7 @@ entryData.place(x=0, y=20, anchor="w")
 buttonData = tk.Button(frameData, text="导入数据", command=import_data, font=("微软雅黑", 12))
 buttonData.place(x=600, y=20, width=120, height=40, anchor="e")
 
-buttonCommit = tk.Button(window, text="确定", command=commit, font=("微软雅黑", 12))
+buttonCommit = tk.Button(window, text="确定", command=get_result, font=("微软雅黑", 12))
 buttonCommit.place(x=570, y=530, width=120, height=40, anchor="n")
 
 """检测结果"""
@@ -452,8 +510,6 @@ labelResultLength = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12))
 labelResultCircum = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12))
 labelResultExperience = ttk.Label(labelFrameResultBasic, font=("微软雅黑", 12), wraplength=180)
 
-labelFigure = tk.Label(labelFrameResult, width=660, height=280)
-
 frameResultLoading = ttk.Frame(labelFrameResult, height=300)
 frameResultLoading.place(x=380, y=150, width=300, height=100, anchor="center")
 figureLoading = tk.PhotoImage(file="./data/loading.gif")
@@ -464,27 +520,39 @@ labelResultLoading.place(x=80, y=48, anchor="w")
 
 frameResultData = ttk.Frame(labelFrameResult, height=50)
 frameResultData.place(x=340, y=320, width=660, height=40, anchor="n")
-
 labelResultData1 = ttk.Label(frameResultData, font=("微软雅黑", 12))
-labelResultData1.place(x=0, y=20, anchor="w")
+labelResultData1.place(x=0, y=20, height=30, anchor="w")
 labelResultData2 = ttk.Label(frameResultData, font=("微软雅黑", 12))
-labelResultData2.place(x=220, y=20, anchor="w")
+labelResultData2.place(x=220, y=20, height=30, anchor="w")
 labelResultData3 = ttk.Label(frameResultData, font=("微软雅黑", 12))
-labelResultData3.place(x=440, y=20, anchor="w")
+labelResultData3.place(x=440, y=20, height=30, anchor="w")
 
-buttonCheckSuggestion = tk.Button(window, text="查看健康建议", command=check_suggestion, font=("微软雅黑", 12))
+frameResultFigure = tk.Frame(labelFrameResult)
+fig = plt.Figure(figsize=(6.6, 2.9), dpi=100)
+canvasFigure = FigureCanvasTkAgg(fig, master=frameResultFigure)
+canvasFigure.get_tk_widget().place(x=330, y=145, width=660, height=290, anchor="center")
+labelFigureXLabel = tk.Label(frameResultFigure, text="时间(s)", font=("微软雅黑", 12))
+labelFigureXLabel.place(x=340, y=290, width=100, height=20, anchor="n")
 
+buttonCheckSuggestion = tk.Button(window, text="查看健康建议", command=get_suggestion, font=("微软雅黑", 12))
 buttonReturnInfo = tk.Button(window, text="编辑基本信息", command=return_info, font=("微软雅黑", 12))
 
 """健康建议"""
 labelFrameSuggestionTitle = ttk.Label(text=" ", font=("微软雅黑", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
+frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
+frameSuggestionLoading.place(x=360, y=180, width=300, height=100, anchor="center")
+labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
+labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
+labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
+labelSuggestionLoading.place(x=80, y=48, anchor="w")
+
 textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=15, wrap="char", font=("楷体", 15))
-textSuggestion.place(x=340, y=200, anchor="center")
+# textSuggestion.place(x=340, y=200, anchor="center")
 
 labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
-labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
+# labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
 
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))
