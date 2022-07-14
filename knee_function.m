@@ -2,7 +2,7 @@ function [num_mean,T_mean,datacorrelation_mean,point,num,T,datacorrelation] = kn
     cd(filepase);
     addpath(genpath('..\'));
     number=1;
-    for file=0:1
+    for file=0:7
         %% 读取，滤波,归一化。得到四组滤波、归一化后信号。m:表格列数%%%%只需更改文件名和采样频率、m
         efs=250000;ymin=0;ymax=1;type=1;
         p=2;s=6;rp=5;rs=13.2;n=1;
@@ -236,7 +236,7 @@ datacorrelation_mean=mean(datacorrelation(:));
 datacorrelation_middle=datacorrelation_sort(3);
 display(datacorrelation_middle);
 
-for j=0:1
+for j=0:7
     for k=1:3
         if datacorrelation(j+1,k)==datacorrelation_middle
            filename=char('tek000'+string(j)+'ALL.csv');ef=zeros([1000000 4]); 

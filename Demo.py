@@ -19,32 +19,42 @@ defaultColor = "black"
 theme = "light"
 windowNo = 1
 columns = ("序号", "姓名", "年龄", "性别", "身高(cm)", "体重(kg)", "大腿长度(cm)", "膝盖腿围(cm)", "健康状况")
-negativeSuggestionText = "健康建议：\n\n   您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞，" + \
+negativeSuggestionText = "健康建议：\n\n     您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞，" + \
                          "这可能是由于长期劳损或骨质疏松造成的慢性退变性撕裂，建议您依据实际情况去骨科或关节外科就医。\n\n" + \
-                         "   如果您的膝盖近期受到过突发碰撞或者您是四十岁以下热爱运动的人群，损伤类型通常为急性创伤性损伤，" + \
-                         "建议您优先考虑运动医学科。\n\n   请遵循医嘱，选择保守治疗或手术治疗，近期应当注意休息和饮食，" + \
+                         "     如果您的膝盖近期受到过突发碰撞或者您是四十岁以下热爱运动的人群，损伤类型通常为急性创伤性损伤，" + \
+                         "建议您优先考虑运动医学科。\n\n     请遵循医嘱，选择保守治疗或手术治疗，近期应当注意休息和饮食，" + \
                          "适当补充维生素和高蛋白、钙元素丰富的食物，适度活动（如散步），并做好病情监控。 "
-positiveSuggestionText = "健康建议：\n\n   您的膝关节健康状况良好，给您提供一些预防膝关节损伤的建议：\n\n" + \
-                         "   进行有益于膝关节健康的运动（如骑自行车、游泳），避免膝关节剧烈运动，必要时请佩戴好护膝。\n\n" + \
-                         "   注意饮食，补充维生素，高蛋白以及含钙丰富的食物，避免暴饮暴食，控制体重；爬楼梯时速度不宜过快，一步一阶。"
+positiveSuggestionText = "健康建议：\n\n     您的膝关节健康状况良好，给您提供一些预防膝关节损伤的建议：\n\n" + \
+                         "     进行有益于膝关节健康的运动（如骑自行车、游泳），避免膝关节剧烈运动，必要时请佩戴好护膝。\n\n" + \
+                         "     注意饮食，补充维生素，高蛋白以及含钙丰富的食物，避免暴饮暴食，控制体重；爬楼梯时速度不宜过快，一步一阶。"
 
 
 def import_data():
     global health, directoryName
     directoryName = filedialog.askdirectory()
-    # fileName = filedialog.askopenfilename(filetypes=[("CSV文件", "*.csv")])
-    # if fileName == "D:/data/patient.csv":
-    #     health = False
-    #     figureFile = ImageTk.PhotoImage(file="./data/patient.png")
-    #     labelFigure.config(image=figureFile)
-    # else:
-    #     health = True
-    #     figureFile = ImageTk.PhotoImage(file="./data/health.png")
-    #     labelFigure.config(image=figureFile)
     entryData.config(state="normal")
     entryData.delete(0, tk.END)
     entryData.insert(0, directoryName)
     entryData.config(state="readonly")
+
+    infoFile = open(directoryName + "/info.txt", "r", encoding="utf-8")
+    entryName.delete(0, tk.END)
+    entryName.insert(0, infoFile.readline())
+    entryAge.delete(0, tk.END)
+    entryAge.insert(0, infoFile.readline())
+    if infoFile.readline() == "男\n":
+        isMale.set(True)
+    else:
+        isMale.set(False)
+    entryHeight.delete(0, tk.END)
+    entryHeight.insert(0, infoFile.readline())
+    entryWeight.delete(0, tk.END)
+    entryWeight.insert(0, infoFile.readline())
+    entryLength.delete(0, tk.END)
+    entryLength.insert(0, infoFile.readline())
+    entryCircum.delete(0, tk.END)
+    entryCircum.insert(0, infoFile.readline())
+    infoFile.close()
 
 
 name = ""
@@ -99,6 +109,12 @@ def run_matlab_result():
     print(basicData)
     print(newMatrix)
 
+    fig = plt.Figure(figsize=(6.6, 2.9), dpi=100)
+    canvasFigure = FigureCanvasTkAgg(fig, master=frameResultFigure)
+    canvasFigure.get_tk_widget().place(x=330, y=145, width=660, height=290, anchor="center")
+    labelFigureXLabel = tk.Label(frameResultFigure, text="时间(s)", font=("微软雅黑", 12))
+    labelFigureXLabel.place(x=340, y=290, width=100, height=20, anchor="n")
+
     points = np.array(ans[3][0])
     t = np.array(np.linspace(0, 4, len(points)))
     tmp = fig.add_subplot(111)
@@ -124,6 +140,12 @@ def run_matlab_suggestion():
     eng.quit()
     print(ans)
 
+    healthIndex = 0
+    for element in range(len(ans)):
+        healthIndex += sum(ans[element])
+    healthIndex = healthIndex / len(ans) / len(ans[0])
+    print(healthIndex)
+
 
 def commit_data():
     global name, age, male, height, weight, length, circum, experience, fileName, windowNo
@@ -136,30 +158,30 @@ def commit_data():
     circum = entryCircum.get()
     fileName = entryData.get()
     experience = entryExperience.get()
-    # if name == "":
-    #     messagebox.showerror(title="姓名错误", message="请输入姓名", parent=window)
-    #     return
-    # if re.match("^\d+$", age) is None:
-    #     messagebox.showerror(title="年龄错误", message="请输入正确的年龄", parent=window)
-    #     return
-    # if re.match("^\d+$", height) is None:
-    #     messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
-    #     return
-    # if re.match("^\d+$", weight) is None:
-    #     messagebox.showerror(title="体重错误", message="请输入正确的体重", parent=window)
-    #     return
-    # if re.match("^\d+$", length) is None:
-    #     messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
-    #     return
-    # if re.match("^\d+$", circum) is None:
-    #     messagebox.showerror(title="腿围错误", message="请输入正确的腿围", parent=window)
-    #     return
-    # if experience == "":
-    #     messagebox.showerror(title="损伤经历错误", message="请输入损伤经历，若无损伤经历请填“无”", parent=window)
-    #     return
-    # if fileName == "":
-    #     messagebox.showerror(title="数据错误", message="请选择数据文件", parent=window)
-    #     return
+    if name == "":
+        messagebox.showerror(title="姓名错误", message="请输入姓名", parent=window)
+        return
+    if re.match("^\d+$", age) is None:
+        messagebox.showerror(title="年龄错误", message="请输入正确的年龄", parent=window)
+        return
+    if re.match("^\d+$", height) is None:
+        messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
+        return
+    if re.match("^\d+$", weight) is None:
+        messagebox.showerror(title="体重错误", message="请输入正确的体重", parent=window)
+        return
+    if re.match("^\d+$", length) is None:
+        messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
+        return
+    if re.match("^\d+$", circum) is None:
+        messagebox.showerror(title="腿围错误", message="请输入正确的腿围", parent=window)
+        return
+    if experience == "":
+        messagebox.showerror(title="损伤经历错误", message="请输入损伤经历，若无损伤经历请填“无”", parent=window)
+        return
+    if fileName == "":
+        messagebox.showerror(title="数据错误", message="请选择数据文件", parent=window)
+        return
     labelFrameInfo.place_forget()
     frameData.place_forget()
     buttonCommit.place_forget()
@@ -218,14 +240,14 @@ def check_suggestion():
         textSuggestion.insert(1.0, positiveSuggestionText)
         textSuggestion.config(state="disabled")
         labelStatus.config(background="#99CC66")
-        labelStatus.config(text="        健康")
+        labelStatus.config(text="         健康状态良好")
     else:
         textSuggestion.config(state="normal")
         textSuggestion.delete(1.0, "end")
         textSuggestion.insert(1.0, negativeSuggestionText)
         textSuggestion.config(state="disabled")
         labelStatus.config(background="#FF0033")
-        labelStatus.config(text="      不健康")
+        labelStatus.config(text="      建议前往医院诊断")
 
     windowNo = 3
     write_history_data()
@@ -533,11 +555,6 @@ labelResultData3 = ttk.Label(frameResultData, font=("微软雅黑", 12))
 labelResultData3.place(x=440, y=20, height=30, anchor="w")
 
 frameResultFigure = tk.Frame(labelFrameResult)
-fig = plt.Figure(figsize=(6.6, 2.9), dpi=100)
-canvasFigure = FigureCanvasTkAgg(fig, master=frameResultFigure)
-canvasFigure.get_tk_widget().place(x=330, y=145, width=660, height=290, anchor="center")
-labelFigureXLabel = tk.Label(frameResultFigure, text="时间(s)", font=("微软雅黑", 12))
-labelFigureXLabel.place(x=340, y=290, width=100, height=20, anchor="n")
 
 buttonCheckSuggestion = tk.Button(window, text="查看健康建议", command=get_suggestion, font=("微软雅黑", 12))
 buttonReturnInfo = tk.Button(window, text="编辑基本信息", command=return_info, font=("微软雅黑", 12))
@@ -546,18 +563,18 @@ buttonReturnInfo = tk.Button(window, text="编辑基本信息", command=return_i
 labelFrameSuggestionTitle = ttk.Label(text=" ", font=("微软雅黑", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
-frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
-frameSuggestionLoading.place(x=360, y=180, width=300, height=100, anchor="center")
-labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
-labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
-labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
-labelSuggestionLoading.place(x=80, y=48, anchor="w")
+# frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
+# frameSuggestionLoading.place(x=350, y=180, width=300, height=100, anchor="center")
+# labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
+# labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
+# labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
+# labelSuggestionLoading.place(x=80, y=48, anchor="w")
 
-textSuggestion = tk.Text(labelFrameSuggestion, width=65, height=15, wrap="char", font=("楷体", 15))
-# textSuggestion.place(x=340, y=200, anchor="center")
+textSuggestion = tk.Text(labelFrameSuggestion, width=40, height=12, wrap="char", font=("微软雅黑", 14))
+textSuggestion.place(x=340, y=200, width=660, height=300, anchor="center")
 
 labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
-# labelStatus.place(x=340, y=16, width=140, height=40, anchor="center")
+labelStatus.place(x=340, y=16, width=240, height=40, anchor="center")
 
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))

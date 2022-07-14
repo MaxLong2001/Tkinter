@@ -2,3 +2,31 @@
 小红 21 女 170 65 50 38 False
 小刚 22 男 165 60 55 40 False
 小丽 23 女 160 55 50 38 True
+酱紫林 20 女 190 80 55 38 True
+酱紫林 20 男 190 80 55 38 True
+酱紫林 20 女 190 80 55 38 True
+张三 20 男 190 80 55 38 True
+张三 20 男 190 80 55 38 True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+  男     True
+酱紫林
+ 20
+ 女 190
+ 80
+ 55
+ 38
+ True
