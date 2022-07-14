@@ -1,5 +1,5 @@
 # coding: utf-8
-
+import time
 import tkinter as tk
 from threading import Thread
 from tkinter import ttk
@@ -14,6 +14,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.font_manager import FontProperties
 import numpy as np
 import pandas as pd
+from PIL import Image, ImageTk, ImageSequence
 
 defaultColor = "black"
 theme = "light"
@@ -39,21 +40,21 @@ def import_data():
 
     infoFile = open(directoryName + "/info.txt", "r", encoding="utf-8")
     entryName.delete(0, tk.END)
-    entryName.insert(0, infoFile.readline())
+    entryName.insert(0, infoFile.readline().strip("\n"))
     entryAge.delete(0, tk.END)
-    entryAge.insert(0, infoFile.readline())
-    if infoFile.readline() == "男\n":
+    entryAge.insert(0, infoFile.readline().strip("\n"))
+    if infoFile.readline().strip("\n") == "男":
         isMale.set(True)
     else:
         isMale.set(False)
     entryHeight.delete(0, tk.END)
-    entryHeight.insert(0, infoFile.readline())
+    entryHeight.insert(0, infoFile.readline().strip("\n"))
     entryWeight.delete(0, tk.END)
-    entryWeight.insert(0, infoFile.readline())
+    entryWeight.insert(0, infoFile.readline().strip("\n"))
     entryLength.delete(0, tk.END)
-    entryLength.insert(0, infoFile.readline())
+    entryLength.insert(0, infoFile.readline().strip("\n"))
     entryCircum.delete(0, tk.END)
-    entryCircum.insert(0, infoFile.readline())
+    entryCircum.insert(0, infoFile.readline().strip("\n"))
     infoFile.close()
 
 
@@ -79,15 +80,19 @@ def get_result():
 
     thread1 = Thread(target=commit_data)
     thread2 = Thread(target=run_matlab_result)
+    thread3 = Thread(target=display_loading_result_gif)
     thread1.start()
     thread2.start()
+    thread3.start()
 
 
 def get_suggestion():
     thread1 = Thread(target=check_suggestion)
     thread2 = Thread(target=run_matlab_suggestion)
+    thread3 = Thread(target=display_loading_suggestion_gif)
     thread1.start()
     thread2.start()
+    thread3.start()
 
 
 def run_matlab_result():
@@ -403,7 +408,7 @@ def refresh_history_data():
 
 
 def clear_history_data():
-    f = open("./data/history.txt", "w")
+    f = open("./data/history.txt", "w", encoding="utf-8")
     f.write("")
     f.close()
     refresh_history_data()
@@ -415,14 +420,34 @@ def delete_selected_data():
         return
     selectedData = treeHistory.item(treeHistory.focus()).get("values")[0] - 1
     print(selectedData)
-    with open("./data/history.txt", "r") as f_r:
+    with open("./data/history.txt", "r", encoding="utf-8") as f_r:
         lines = f_r.readlines()
-    with open("./data/history.txt", "w") as f_w:
+    with open("./data/history.txt", "w", encoding="utf-8") as f_w:
         for it in range(len(lines)):
             if it != selectedData:
                 f_w.write(lines[it])
     treeHistory.delete(treeHistory.selection())
     refresh_history_data()
+
+
+def display_loading_result_gif():
+    while 1:
+        gifImg = Image.open("./data/loading.gif")
+        iterator = ImageSequence.Iterator(gifImg)
+        for frame in iterator:
+            pic = ImageTk.PhotoImage(frame)
+            labelFigureLoading.config(image=pic)
+            time.sleep(0.1)
+
+
+def display_loading_suggestion_gif():
+    while 1:
+        gifImg = Image.open("./data/loading.gif")
+        iterator = ImageSequence.Iterator(gifImg)
+        for frame in iterator:
+            pic = ImageTk.PhotoImage(frame)
+            labelFigureSuggestionLoading.config(image=pic)
+            time.sleep(0.1)
 
 
 """窗口"""
@@ -563,18 +588,18 @@ buttonReturnInfo = tk.Button(window, text="编辑基本信息", command=return_i
 labelFrameSuggestionTitle = ttk.Label(text=" ", font=("微软雅黑", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
-# frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
-# frameSuggestionLoading.place(x=350, y=180, width=300, height=100, anchor="center")
-# labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
-# labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
-# labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
-# labelSuggestionLoading.place(x=80, y=48, anchor="w")
+frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
+frameSuggestionLoading.place(x=350, y=180, width=300, height=100, anchor="center")
+labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
+labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
+labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
+labelSuggestionLoading.place(x=80, y=48, anchor="w")
 
 textSuggestion = tk.Text(labelFrameSuggestion, width=40, height=12, wrap="char", font=("微软雅黑", 14))
-textSuggestion.place(x=340, y=200, width=660, height=300, anchor="center")
+# textSuggestion.place(x=340, y=200, width=660, height=300, anchor="center")
 
 labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
-labelStatus.place(x=340, y=16, width=240, height=40, anchor="center")
+# labelStatus.place(x=340, y=16, width=240, height=40, anchor="center")
 
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))
