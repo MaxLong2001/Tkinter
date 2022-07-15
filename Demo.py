@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import time
 import tkinter as tk
 from threading import Thread
@@ -28,6 +29,7 @@ negativeSuggestionText = "健康建议：\n\n     您的膝关节可能已经受
 positiveSuggestionText = "健康建议：\n\n     您的膝关节健康状况良好，给您提供一些预防膝关节损伤的建议：\n\n" + \
                          "     进行有益于膝关节健康的运动（如骑自行车、游泳），避免膝关节剧烈运动，必要时请佩戴好护膝。\n\n" + \
                          "     注意饮食，补充维生素，高蛋白以及含钙丰富的食物，避免暴饮暴食，控制体重；爬楼梯时速度不宜过快，一步一阶。"
+subHealthSuggestionText = "健康建议：\n\n     您的膝关节可能已经受到损伤如果您的膝盖近期没有受到突发碰撞"
 
 
 def import_data():
@@ -55,6 +57,8 @@ def import_data():
     entryLength.insert(0, infoFile.readline().strip("\n"))
     entryCircum.delete(0, tk.END)
     entryCircum.insert(0, infoFile.readline().strip("\n"))
+    entryExperience.delete(0, tk.END)
+    entryExperience.insert(0, infoFile.readline().strip("\n"))
     infoFile.close()
 
 
@@ -67,32 +71,45 @@ length = 0
 circum = 0
 experience = ""
 directoryName = ""
-health = True
+health = 0
 newMatrix = []
 
 
 def get_result():
+    buttonCheckSuggestion.config(state="disabled")
+    buttonReturnInfo.config(state="disabled")
     labelResultData1.config(text="")
     labelResultData2.config(text="")
     labelResultData3.config(text="")
     frameResultFigure.place_forget()
-    frameResultLoading.place(x=380, y=150, width=300, height=100, anchor="center")
+    frameResultLoading.place(x=380, y=170, width=300, height=100, anchor="center")
 
-    thread1 = Thread(target=commit_data)
-    thread2 = Thread(target=run_matlab_result)
-    thread3 = Thread(target=display_loading_result_gif)
-    thread1.start()
-    thread2.start()
-    thread3.start()
+    threadCommitData = Thread(target=commit_data)
+    threadCommitData.setDaemon(True)
+    threadMatlabResult = Thread(target=run_matlab_result)
+    threadMatlabResult.setDaemon(True)
+    threadLoadingResult = Thread(target=display_loading_result_gif)
+    threadLoadingResult.setDaemon(True)
+    threadCommitData.start()
+    threadMatlabResult.start()
+    threadLoadingResult.start()
 
 
 def get_suggestion():
-    thread1 = Thread(target=check_suggestion)
-    thread2 = Thread(target=run_matlab_suggestion)
-    thread3 = Thread(target=display_loading_suggestion_gif)
-    thread1.start()
-    thread2.start()
-    thread3.start()
+    buttonReturnInfo.config(state="disabled")
+    textSuggestion.place_forget()
+    labelStatus.place_forget()
+    frameSuggestionLoading.place(x=350, y=170, width=300, height=100, anchor="center")
+
+    threadCheckSuggestion = Thread(target=check_suggestion)
+    threadCheckSuggestion.setDaemon(True)
+    threadMatlabSuggestion = Thread(target=run_matlab_suggestion)
+    threadMatlabSuggestion.setDaemon(True)
+    threadLoadingSuggestion = Thread(target=display_loading_suggestion_gif)
+    threadLoadingSuggestion.setDaemon(True)
+    threadCheckSuggestion.start()
+    threadMatlabSuggestion.start()
+    threadLoadingSuggestion.start()
 
 
 def run_matlab_result():
@@ -110,7 +127,7 @@ def run_matlab_result():
     basicData[:, 1] = weight
     basicData[:, 2] = circum
     basicData[:, 3] = length
-    newMatrix = np.hstack((basicData, ans[4], ans[5], ans[6]))
+    newMatrix = np.hstack((basicData, ans[4], ans[6], ans[5]))
     print(basicData)
     print(newMatrix)
 
@@ -128,10 +145,12 @@ def run_matlab_result():
 
     frameResultLoading.place_forget()
     frameResultFigure.place(x=340, y=0, width=660, height=310, anchor="n")
+    buttonCheckSuggestion.config(state="normal")
+    buttonReturnInfo.config(state="normal")
 
 
 def run_matlab_suggestion():
-    global newMatrix
+    global newMatrix, health
     dataSheet = pd.read_excel("./data/data_collection.xlsx", sheet_name="Sheet8")
     dataArray = np.array(dataSheet)
     dataList = dataArray.tolist()
@@ -151,6 +170,35 @@ def run_matlab_suggestion():
     healthIndex = healthIndex / len(ans) / len(ans[0])
     print(healthIndex)
 
+    if healthIndex < 1 / 3:
+        health = 0
+        textSuggestion.config(state="normal")
+        textSuggestion.delete(1.0, "end")
+        textSuggestion.insert(1.0, positiveSuggestionText)
+        textSuggestion.config(state="disabled")
+        labelStatus.config(background="#99CC66")
+        labelStatus.config(text="         健康状态良好")
+    elif healthIndex < 1 / 2:
+        health = 1
+        textSuggestion.config(state="normal")
+        textSuggestion.delete(1.0, "end")
+        textSuggestion.insert(1.0, subHealthSuggestionText)
+        textSuggestion.config(state="disabled")
+        labelStatus.config(background="#FFCC00")
+        labelStatus.config(text="         存在健康隐患")
+    else:
+        health = 2
+        textSuggestion.config(state="normal")
+        textSuggestion.delete(1.0, "end")
+        textSuggestion.insert(1.0, negativeSuggestionText)
+        textSuggestion.config(state="disabled")
+        labelStatus.config(background="#FF0033")
+        labelStatus.config(text="      建议进行专业诊断")
+
+    textSuggestion.place(x=340, y=200, width=660, height=300, anchor="center")
+    labelStatus.place(x=340, y=16, width=240, height=40, anchor="center")
+    buttonReturnInfo.config(state="normal")
+
 
 def commit_data():
     global name, age, male, height, weight, length, circum, experience, fileName, windowNo
@@ -169,16 +217,16 @@ def commit_data():
     if re.match("^\d+$", age) is None:
         messagebox.showerror(title="年龄错误", message="请输入正确的年龄", parent=window)
         return
-    if re.match("^\d+$", height) is None:
+    if re.match("^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$", height) is None and re.match("^[1-9]\d*$", height) is None:
         messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
         return
-    if re.match("^\d+$", weight) is None:
+    if re.match("^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$", weight) is None and re.match("^[1-9]\d*$", weight) is None:
         messagebox.showerror(title="体重错误", message="请输入正确的体重", parent=window)
         return
-    if re.match("^\d+$", length) is None:
-        messagebox.showerror(title="身高错误", message="请输入正确的身高", parent=window)
+    if re.match("^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$", length) is None and re.match("^[1-9]\d*$", length) is None:
+        messagebox.showerror(title="腿长错误", message="请输入正确的腿长", parent=window)
         return
-    if re.match("^\d+$", circum) is None:
+    if re.match("^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$", circum) is None and re.match("^[1-9]\d*$", circum) is None:
         messagebox.showerror(title="腿围错误", message="请输入正确的腿围", parent=window)
         return
     if experience == "":
@@ -238,21 +286,6 @@ def check_suggestion():
     buttonReturnInfo.place(x=570, y=530, width=120, height=40, anchor="n")
     labelFrameSuggestion.place(x=630, y=100, width=680, height=400, anchor="n")
     buttonHistory.place(x=430, y=530, width=120, height=40, anchor="n")
-
-    if health:
-        textSuggestion.config(state="normal")
-        textSuggestion.delete(1.0, "end")
-        textSuggestion.insert(1.0, positiveSuggestionText)
-        textSuggestion.config(state="disabled")
-        labelStatus.config(background="#99CC66")
-        labelStatus.config(text="         健康状态良好")
-    else:
-        textSuggestion.config(state="normal")
-        textSuggestion.delete(1.0, "end")
-        textSuggestion.insert(1.0, negativeSuggestionText)
-        textSuggestion.config(state="disabled")
-        labelStatus.config(background="#FF0033")
-        labelStatus.config(text="      建议前往医院诊断")
 
     windowNo = 3
     write_history_data()
@@ -330,10 +363,16 @@ def read_history_data():
     while line:
         lineCount += 1
         dataList = line.split(" ")
+        status = ""
+        if dataList[7].strip("\n") == "0":
+            status = "健康"
+        elif dataList[7].strip("\n") == "1":
+            status = "亚健康"
+        elif dataList[7].strip("\n") == "2":
+            status = "不健康"
         treeHistory.insert("", "end", values=(lineCount,
                                               dataList[0], dataList[1], dataList[2], dataList[3], dataList[4],
-                                              dataList[5], dataList[6],
-                                              "健康" if dataList[7].replace("\n", "") == "True" else "不健康"))
+                                              dataList[5], dataList[6], status))
         line = f.readline()
     f.close()
 
@@ -575,9 +614,9 @@ frameResultData.place(x=340, y=320, width=660, height=40, anchor="n")
 labelResultData1 = ttk.Label(frameResultData, font=("微软雅黑", 12))
 labelResultData1.place(x=0, y=20, height=30, anchor="w")
 labelResultData2 = ttk.Label(frameResultData, font=("微软雅黑", 12))
-labelResultData2.place(x=220, y=20, height=30, anchor="w")
+labelResultData2.place(x=240, y=20, height=30, anchor="w")
 labelResultData3 = ttk.Label(frameResultData, font=("微软雅黑", 12))
-labelResultData3.place(x=440, y=20, height=30, anchor="w")
+labelResultData3.place(x=460, y=20, height=30, anchor="w")
 
 frameResultFigure = tk.Frame(labelFrameResult)
 
@@ -589,17 +628,14 @@ labelFrameSuggestionTitle = ttk.Label(text=" ", font=("微软雅黑", 14))
 labelFrameSuggestion = ttk.LabelFrame(window, labelwidget=labelFrameSuggestionTitle)
 
 frameSuggestionLoading = ttk.Frame(labelFrameSuggestion)
-frameSuggestionLoading.place(x=350, y=180, width=300, height=100, anchor="center")
+frameSuggestionLoading.place(x=350, y=170, width=300, height=100, anchor="center")
 labelFigureSuggestionLoading = tk.Label(frameSuggestionLoading, image=figureLoading)
 labelFigureSuggestionLoading.place(x=0, y=50, anchor="w")
 labelSuggestionLoading = ttk.Label(frameSuggestionLoading, text="正在生成健康建议...", font=("微软雅黑", 12))
 labelSuggestionLoading.place(x=80, y=48, anchor="w")
 
 textSuggestion = tk.Text(labelFrameSuggestion, width=40, height=12, wrap="char", font=("微软雅黑", 14))
-# textSuggestion.place(x=340, y=200, width=660, height=300, anchor="center")
-
 labelStatus = ttk.Label(labelFrameSuggestion, font=("微软雅黑", 16))
-# labelStatus.place(x=340, y=16, width=240, height=40, anchor="center")
 
 """历史记录"""
 labelFrameHistoryTitle = ttk.Label(text="历史记录", font=("微软雅黑", 14))

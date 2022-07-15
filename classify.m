@@ -1,8 +1,5 @@
 function pre = classify(Q,X,frequency)
 pre = [];
-display(Q);
-display(X);
-display(frequency);
 %Q是训练模型所用的数据
 %X是做分类预测数据的特征值
 %frequency是分类次数
