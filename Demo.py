@@ -40,26 +40,29 @@ def import_data():
     entryData.insert(0, directoryName)
     entryData.config(state="readonly")
 
-    infoFile = open(directoryName + "/info.txt", "r", encoding="utf-8")
-    entryName.delete(0, tk.END)
-    entryName.insert(0, infoFile.readline().strip("\n"))
-    entryAge.delete(0, tk.END)
-    entryAge.insert(0, infoFile.readline().strip("\n"))
-    if infoFile.readline().strip("\n") == "男":
-        isMale.set(True)
-    else:
-        isMale.set(False)
-    entryHeight.delete(0, tk.END)
-    entryHeight.insert(0, infoFile.readline().strip("\n"))
-    entryWeight.delete(0, tk.END)
-    entryWeight.insert(0, infoFile.readline().strip("\n"))
-    entryLength.delete(0, tk.END)
-    entryLength.insert(0, infoFile.readline().strip("\n"))
-    entryCircum.delete(0, tk.END)
-    entryCircum.insert(0, infoFile.readline().strip("\n"))
-    entryExperience.delete(0, tk.END)
-    entryExperience.insert(0, infoFile.readline().strip("\n"))
-    infoFile.close()
+    try:
+        infoFile = open(directoryName + "/info.txt", "r", encoding="utf-8")
+        entryName.delete(0, tk.END)
+        entryName.insert(0, infoFile.readline().strip("\n"))
+        entryAge.delete(0, tk.END)
+        entryAge.insert(0, infoFile.readline().strip("\n"))
+        if infoFile.readline().strip("\n") == "男":
+            isMale.set(True)
+        else:
+            isMale.set(False)
+        entryHeight.delete(0, tk.END)
+        entryHeight.insert(0, infoFile.readline().strip("\n"))
+        entryWeight.delete(0, tk.END)
+        entryWeight.insert(0, infoFile.readline().strip("\n"))
+        entryLength.delete(0, tk.END)
+        entryLength.insert(0, infoFile.readline().strip("\n"))
+        entryCircum.delete(0, tk.END)
+        entryCircum.insert(0, infoFile.readline().strip("\n"))
+        entryExperience.delete(0, tk.END)
+        entryExperience.insert(0, infoFile.readline().strip("\n"))
+        infoFile.close()
+    except FileNotFoundError:
+        pass
 
 
 name = ""
